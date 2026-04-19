@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Keiba Data Crawler",
+  "version": "1.0.0",
+  "description": "Crawl tên ngựa, odds và nài ngựa",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://*/*" 
+  ]
+}
