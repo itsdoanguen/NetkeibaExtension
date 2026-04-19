@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# Keiba Data Crawler（Chrome 拡張）
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Netkeiba のレース情報を取得し、サイドパネルで確認するための Chrome 拡張です。  
+レース一覧、出走馬、オッズ、馬詳細を簡単に確認できます。
 
-Currently, two official plugins are available:
+## 主な機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- レース一覧の取得
+- 競馬場・レースの選択
+- 選択したレースの出走馬情報とオッズ表示
+- 馬詳細パネルの表示
 
-## React Compiler
+## セットアップ
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ビルド
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+開発中に自動ビルドしたい場合:
+
+```bash
+npm run watch
+```
+
+## Chrome への読み込み方法
+
+1. `npm run build` を実行
+2. Chrome で `chrome://extensions` を開く
+3. 右上の「デベロッパーモード」を有効化
+4. 「パッケージ化されていない拡張機能を読み込む」をクリック
+5. このプロジェクトの `dist` フォルダを選択
+
+## 使い方
+
+1. 拡張のサイドパネルを開く
+2. ヘッダーの更新ボタン（↻）でレース一覧を取得
+3. 競馬場とレースを選択
+4. 馬一覧を確認し、行をクリックして馬詳細を表示
+
+## スクリーンショット（プレースホルダー）
+
+下記は仮の画像です。実際のスクリーンショットを撮影したら、同じファイル名で置き換えてください。
+
+### 1) レース選択
+
+![レース選択プレースホルダー](docs/images/race.png)
+
+### 2) 馬詳細パネル
+
+![馬詳細プレースホルダー](docs/images/uma.png)
+
+## 画像の追加・差し替え方法
+
+1. `docs/images` フォルダに画像ファイルを追加します。
+2. 既存のプレースホルダーを差し替える場合は、同じファイル名で上書きします。
+3. 新しい画像を追加する場合は、README に以下の形式で追記します。
+
+```md
+### 追加したい見出し
+![説明テキスト](docs/images/your-image-file.png)
+```
+
+### 推奨設定
+
+- 形式: `png` または `jpg`
+- 横幅: 1200px 以上
+- 比率: 16:9 または 4:3
+- ファイル名: 英数字とハイフンのみ（例: `race-details-01.png`）
+
+## 利用可能なコマンド
+
+- `npm run dev`: Vite 開発サーバー
+- `npm run build`: 本番ビルド
+- `npm run watch`: ビルドの監視
+- `npm run lint`: ESLint 実行
+- `npm run preview`: ビルド結果の確認
+
+## 補足
+
+- アイコンや manifest の変更後は、`chrome://extensions` で拡張を再読み込みしてください。

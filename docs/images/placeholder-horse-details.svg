@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="Horse details placeholder">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e9e4ef" />
+      <stop offset="100%" stop-color="#d5c8e3" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg3)"/>
+  <rect x="64" y="64" width="1152" height="592" rx="18" fill="#ffffff" stroke="#9d89b6" stroke-width="4"/>
+  <text x="640" y="300" font-size="56" text-anchor="middle" fill="#4f3f67" font-family="Segoe UI, Arial, sans-serif">Screenshot Placeholder</text>
+  <text x="640" y="370" font-size="36" text-anchor="middle" fill="#695784" font-family="Segoe UI, Arial, sans-serif">Horse Details Panel</text>
+  <text x="640" y="430" font-size="24" text-anchor="middle" fill="#7c6799" font-family="Segoe UI, Arial, sans-serif">Pedigree / race history view</text>
+</svg>
