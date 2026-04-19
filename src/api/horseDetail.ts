@@ -19,7 +19,7 @@ function buildHorsePedUrl(horseId: string): string {
 }
 
 function extractHorseIdFromUrl(url: string): string | undefined {
-  const match = url.match(/\/horse\/(\d+)/)
+  const match = url.match(/\/horse\/([0-9a-zA-Z]+)/)
   return match?.[1]
 }
 
@@ -108,11 +108,12 @@ function parseRaceHistory($: ReturnType<typeof load>): RaceHistoryRecord[] {
 
 function parsePedigree($: ReturnType<typeof load>): PedigreeNode[] {
   const nodes: PedigreeNode[] = []
+  const seenLinks = new Set<string>()
 
   const pedigreeLinks = $('.horse_pedigree_box a').length > 0 ? $('.horse_pedigree_box a') : $('.blood_table a')
 
   pedigreeLinks.each((_, anchor) => {
-    const horseName = $(anchor).text().trim()
+    const horseName = normalizeText($(anchor).text())
     const href = $(anchor).attr('href')
 
     if (!horseName || !href) {
@@ -120,6 +121,18 @@ function parsePedigree($: ReturnType<typeof load>): PedigreeNode[] {
     }
 
     const link = toAbsoluteUrl(HORSE_DB_BASE, href)
+    const pathname = new URL(link).pathname
+
+    // Keep only direct horse profile links in pedigree tree.
+    if (!/^\/horse\/[0-9a-zA-Z]+\/?$/.test(pathname)) {
+      return
+    }
+
+    if (seenLinks.has(link)) {
+      return
+    }
+    seenLinks.add(link)
+
     nodes.push({
       horseName,
       link,

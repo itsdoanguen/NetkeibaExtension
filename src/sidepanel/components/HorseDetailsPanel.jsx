@@ -9,13 +9,20 @@ function buildPedigreeLevels(pedigree = []) {
 
   const levelSizes = [1, 2, 4, 8]
   const levelLabels = ['第1世代', '第2世代', '第3世代', '第4世代']
+  const roleByLevel = [
+    ['対象馬'],
+    ['父', '母'],
+    ['父父', '父母', '母父', '母母'],
+    ['父父父', '父父母', '父母父', '父母母', '母父父', '母父母', '母母父', '母母母'],
+  ]
   let cursor = 0
 
   return levelSizes
     .map((size, index) => {
       const entries = pedigree.slice(cursor, cursor + size).map((node, entryIndex) => ({
-        role: node.horseId ? `ID ${node.horseId}` : `Line ${entryIndex + 1}`,
+        role: roleByLevel[index]?.[entryIndex] ?? `Line ${entryIndex + 1}`,
         name: node.horseName,
+        key: node.link ?? `${levelLabels[index]}-${entryIndex}-${node.horseId ?? node.horseName}`,
       }))
       cursor += size
 
@@ -259,7 +266,7 @@ function HorseDetailsPanel({ isOpen, runner, details, isLoading, errorMessage, o
 
                         return (
                           <article
-                            key={`${level.generation}-${entry.role}`}
+                            key={entry.key}
                             className={`pedigree-card pedigree-card-${branch}${
                               detailBranch ? ` pedigree-card-${detailBranch}` : ''
                             }${

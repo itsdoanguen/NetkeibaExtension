@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "watch": "vite build --watch",
-    "test:smoke:crawl": "node src/test/smoke-crawl.mjs"
+    "test:smoke:crawl": "node src/test/smoke-crawl.mjs",
+    "test:inspect:horse-details-panel": "node src/test/inspect-horse-details-panel.mjs"
   },
   "dependencies": {
     "cheerio": "^1.2.0",
