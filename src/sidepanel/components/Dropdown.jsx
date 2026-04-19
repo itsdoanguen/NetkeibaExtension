@@ -1,3 +1,5 @@
+import './Dropdown.css'
+
 function normalizeOption(option) {
   if (typeof option === 'string') {
     return { value: option, label: option }

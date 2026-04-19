@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import './HorseDetailsPanel.css'
+
 function buildPedigreeLevels(pedigree = []) {
   if (!Array.isArray(pedigree) || pedigree.length === 0) {
     return []

@@ -1,3 +1,5 @@
+import './OddsTable.css'
+
 function OddsTable({ rows, onRunnerClick }) {
   return (
     <>

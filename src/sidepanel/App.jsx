@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import './styles.css'
+import './App.css'
 import Dropdown from './components/Dropdown.jsx'
 import HorseDetailsPanel from './components/HorseDetailsPanel.jsx'
 import OddsTable from './components/OddsTable.jsx'
