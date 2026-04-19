@@ -1,7 +1,6 @@
 import { fetchHorseDetails } from './horseDetail'
 import { fetchRaceHorses } from './raceDetail'
 import { fetchRaceList } from './raceList'
-import { setPipelineResult } from './storage'
 import type { HorseDetails, PipelineResult, RaceResult } from './types'
 
 export { fetchRaceList } from './raceList'
@@ -39,6 +38,5 @@ export async function runPipeline(options?: {
     horseDetailsByHorseId,
   }
 
-  await setPipelineResult(result)
   return result
 }

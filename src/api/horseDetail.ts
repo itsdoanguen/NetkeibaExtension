@@ -1,7 +1,6 @@
 import { load } from 'cheerio'
 
 import { fetchHtml, toAbsoluteUrl, withRetry } from './http'
-import { setHorseDetails } from './storage'
 import type { HorseDetails, PedigreeNode, RaceHistoryRecord } from './types'
 
 const HORSE_DB_BASE = 'https://db.netkeiba.com/'
@@ -212,6 +211,5 @@ export async function fetchHorseDetails(horseId: string): Promise<HorseDetails> 
     pedigree,
   }
 
-  await setHorseDetails(details)
   return details
 }
