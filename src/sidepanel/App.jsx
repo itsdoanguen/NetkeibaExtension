@@ -1,4 +1,6 @@
-import './App.css'
+import './styles.css'
+import Dropdown from './components/Dropdown.jsx'
+import OddsTable from './components/OddsTable.jsx'
 
 function App() {
   const rows = [
@@ -26,19 +28,8 @@ function App() {
       <main className="tracker-body">
         <section className="filter-card surface-low ghost-border">
           <div className="filter-grid">
-            <label className="field">
-              <span>Track</span>
-              <select defaultValue="Tokyo" aria-label="Track">
-                <option>Tokyo</option>
-              </select>
-            </label>
-
-            <label className="field">
-              <span>Race</span>
-              <select defaultValue="11R" aria-label="Race">
-                <option>11R</option>
-              </select>
-            </label>
+            <Dropdown label="Track" value="Tokyo" options={['Tokyo']} />
+            <Dropdown label="Race" value="11R" options={['11R']} />
           </div>
 
           <button className="fetch-btn" type="button">
@@ -52,28 +43,7 @@ function App() {
             <span className="live-chip">LIVE</span>
           </div>
 
-          <div className="odds-header" role="row">
-            <span>NO.</span>
-            <span>HORSE / JOCKEY</span>
-            <span>ODDS</span>
-          </div>
-
-          <div className="odds-list" role="table" aria-label="Current odds">
-            {rows.map((row) => (
-              <article
-                key={row.no}
-                className={`odds-row${row.featured ? ' featured' : ''}`}
-                role="row"
-              >
-                <div className="rank">{row.no}</div>
-                <div className="runner">
-                  <p className="horse">{row.horse}</p>
-                  <p className="jockey">{row.jockey}</p>
-                </div>
-                <p className={`price${row.featured ? ' top' : ''}`}>{row.odds}</p>
-              </article>
-            ))}
-          </div>
+          <OddsTable rows={rows} />
         </section>
       </main>
 

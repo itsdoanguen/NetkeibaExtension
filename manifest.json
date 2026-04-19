@@ -3,14 +3,27 @@
   "name": "Keiba Data Crawler",
   "version": "1.0.0",
   "description": "Crawl tên ngựa, odds và nài ngựa",
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
   "action": {
-    "default_popup": "index.html"
+    "default_title": "JRA Odds Tracker"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "background": {
+    "service_worker": "src/background/index.js",
+    "type": "module"
   },
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "sidePanel"
   ],
   "host_permissions": [
-    "https://*/*" 
+    "https://*/*"
   ]
 }

@@ -1,20 +1,21 @@
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { crx } from '@crxjs/vite-plugin'
-import manifest from './manifest.json'
+
+const manifest = JSON.parse(
+  readFileSync(new URL('./manifest.json', import.meta.url), 'utf-8'),
+)
 
 export default defineConfig({
-  plugins: [
-    react(),
-    crx({ manifest }),
-  ],
+  plugins: [react(), crx({ manifest })],
   server: {
     port: 5173,
     strictPort: true,
-    host: '127.0.0.1', // Ép chạy trên IPv4
+    host: '127.0.0.1',
     hmr: {
       port: 5173,
-      host: '127.0.0.1', // Bắt HMR kết nối qua IPv4
+      host: '127.0.0.1',
     },
   },
 })
