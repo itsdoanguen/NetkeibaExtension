@@ -3,7 +3,7 @@ function OddsTable({ rows, onRunnerClick }) {
     <>
       <div className="odds-header" role="row">
         <span>NO.</span>
-        <span>HORSE / JOCKEY</span>
+        <span>HORSE / INFO</span>
         <span>ODDS</span>
       </div>
 
@@ -23,6 +23,10 @@ function OddsTable({ rows, onRunnerClick }) {
             >
               <p className="horse">{row.horse}</p>
               <p className="jockey">{row.jockey}</p>
+              <p className="runner-meta" aria-label="Gate and silk information">
+                <span className="meta-chip">Cổng {row.gate}</span>
+                <span className="meta-chip">Áo {row.silk}</span>
+              </p>
             </button>
             <p className={`price${row.featured ? ' top' : ''}`}>{row.odds}</p>
           </article>
