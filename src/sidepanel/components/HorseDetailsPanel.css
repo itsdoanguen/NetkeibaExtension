@@ -149,10 +149,14 @@
 
 .history-grid {
   display: grid;
-  grid-template-columns: 48px 1fr 74px 44px 40px;
-  gap: 8px;
-  align-items: center;
-  padding: 9px 10px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 2.2fr) minmax(0, 1.1fr) minmax(0, 0.8fr) 26px;
+  gap: 6px;
+  align-items: start;
+  padding: 9px 8px;
+}
+
+.history-grid > * {
+  min-width: 0;
 }
 
 .history-grid-head {
@@ -172,6 +176,7 @@
   min-height: 58px;
   background: var(--color-surface-container-lowest);
   border-bottom: 1px solid var(--color-ghost-border);
+  align-items: start;
 }
 
 .history-grid-row:last-child {
@@ -183,6 +188,13 @@
 .history-odds {
   font-size: 12px;
   color: var(--color-on-surface-variant);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.history-date {
+  white-space: normal;
 }
 
 .history-race p,
@@ -190,20 +202,31 @@
   margin: 0;
 }
 
+.history-race {
+  min-width: 0;
+}
+
 .history-race p {
   font-size: 12px;
   font-weight: 600;
   color: var(--color-on-surface);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .history-race small {
   font-size: 11px;
   color: var(--color-on-surface-variant);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .history-odds {
   font-weight: 600;
   color: var(--color-on-surface);
+  white-space: normal;
 }
 
 .history-rank {
@@ -229,6 +252,14 @@
 
 .history-rank.rank-neutral {
   color: var(--color-on-surface-variant);
+}
+
+.history-grid-row {
+  align-items: start;
+}
+
+.history-grid-row .history-rank {
+  margin-top: 2px;
 }
 
 .pedigree-view {
@@ -501,36 +532,22 @@
   color: var(--color-on-surface-variant);
 }
 
-.horse-detail-footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 12px;
-  border-top: 1px solid var(--color-ghost-border);
-  background: var(--color-surface-container-lowest);
-}
-
-.horse-action-btn {
-  height: 38px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-on-surface);
-  background: var(--color-surface-container-lowest);
-  cursor: pointer;
-}
-
-.horse-action-btn.primary {
-  border: none;
-  background: var(--gradient-primary);
-  color: var(--color-on-primary);
-}
-
 @media (max-width: 360px) {
   .history-grid {
-    grid-template-columns: 44px 1fr 68px 40px 36px;
-    gap: 6px;
-    padding-inline: 8px;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) minmax(0, 1fr) minmax(0, 0.8fr) 24px;
+    gap: 4px;
+    padding-inline: 6px;
+  }
+
+  .history-race p {
+    font-size: 11px;
+  }
+
+  .history-race small,
+  .history-date,
+  .history-jockey,
+  .history-odds {
+    font-size: 10px;
   }
 
   .pedigree-level {

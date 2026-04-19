@@ -291,15 +291,6 @@ function HorseDetailsPanel({ isOpen, runner, details, isLoading, errorMessage, o
             </div>
           )}
         </section>
-
-        <footer className="horse-detail-footer">
-          <button type="button" className="horse-action-btn ghost-border">
-            プロフィール共有
-          </button>
-          <button type="button" className="horse-action-btn primary">
-            追跡に追加
-          </button>
-        </footer>
       </aside>
     </div>
   )
