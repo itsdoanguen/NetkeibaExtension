@@ -1,0 +1,535 @@
+{
+  "input": {
+    "raceId": "202606030811",
+    "horseId": "2023107153",
+    "horseName": "カヴァレリッツォ",
+    "sourceUrl": "https://race.netkeiba.com/race/shutuba.html?race_id=202606030811",
+    "raceHorseCount": 18,
+    "pedUrl": "https://db.netkeiba.com/horse/ped/2023107153/"
+  },
+  "summary": {
+    "rawPedigreeNodeCount": 59,
+    "levelCount": 4,
+    "renderedEntryCount": 15,
+    "hasExpectedRoleStyle": true,
+    "unicodeEscapeInTerminal": true
+  },
+  "sections": {
+    "rawPedigreeNodes": [
+      {
+        "horseName": "サートゥルナーリア",
+        "link": "https://db.netkeiba.com/horse/2016104505/",
+        "horseId": "2016104505"
+      },
+      {
+        "horseName": "ロードカナロア",
+        "link": "https://db.netkeiba.com/horse/2008103552/",
+        "horseId": "2008103552"
+      },
+      {
+        "horseName": "キングカメハメハ",
+        "link": "https://db.netkeiba.com/horse/2001103460/",
+        "horseId": "2001103460"
+      },
+      {
+        "horseName": "Kingmambo",
+        "link": "https://db.netkeiba.com/horse/000a001d7e/",
+        "horseId": "000a001d7e"
+      },
+      {
+        "horseName": "Mr. Prospector",
+        "link": "https://db.netkeiba.com/horse/000a001607/",
+        "horseId": "000a001607"
+      },
+      {
+        "horseName": "Miesque",
+        "link": "https://db.netkeiba.com/horse/000a009961/",
+        "horseId": "000a009961"
+      },
+      {
+        "horseName": "マンファス",
+        "link": "https://db.netkeiba.com/horse/000a00680e/",
+        "horseId": "000a00680e"
+      },
+      {
+        "horseName": "ラストタイクーン",
+        "link": "https://db.netkeiba.com/horse/000a0001d6/",
+        "horseId": "000a0001d6"
+      },
+      {
+        "horseName": "Pilot Bird",
+        "link": "https://db.netkeiba.com/horse/000a00b1e0/",
+        "horseId": "000a00b1e0"
+      },
+      {
+        "horseName": "レディブラッサム",
+        "link": "https://db.netkeiba.com/horse/1996107173/",
+        "horseId": "1996107173"
+      },
+      {
+        "horseName": "Storm Cat",
+        "link": "https://db.netkeiba.com/horse/000a001a98/",
+        "horseId": "000a001a98"
+      },
+      {
+        "horseName": "Storm Bird",
+        "link": "https://db.netkeiba.com/horse/000a0016d4/",
+        "horseId": "000a0016d4"
+      },
+      {
+        "horseName": "Terlingua",
+        "link": "https://db.netkeiba.com/horse/000a008e05/",
+        "horseId": "000a008e05"
+      },
+      {
+        "horseName": "サラトガデュー",
+        "link": "https://db.netkeiba.com/horse/000a00652e/",
+        "horseId": "000a00652e"
+      },
+      {
+        "horseName": "Cormorant",
+        "link": "https://db.netkeiba.com/horse/000a00177c/",
+        "horseId": "000a00177c"
+      },
+      {
+        "horseName": "Super Luna",
+        "link": "https://db.netkeiba.com/horse/000a00033d/",
+        "horseId": "000a00033d"
+      },
+      {
+        "horseName": "シーザリオ",
+        "link": "https://db.netkeiba.com/horse/2002100844/",
+        "horseId": "2002100844"
+      },
+      {
+        "horseName": "スペシャルウィーク",
+        "link": "https://db.netkeiba.com/horse/1995103211/",
+        "horseId": "1995103211"
+      },
+      {
+        "horseName": "サンデーサイレンス",
+        "link": "https://db.netkeiba.com/horse/000a00033a/",
+        "horseId": "000a00033a"
+      },
+      {
+        "horseName": "Halo",
+        "link": "https://db.netkeiba.com/horse/000a0012bf/",
+        "horseId": "000a0012bf"
+      },
+      {
+        "horseName": "Wishing Well",
+        "link": "https://db.netkeiba.com/horse/000a008c1e/",
+        "horseId": "000a008c1e"
+      },
+      {
+        "horseName": "キャンペンガール",
+        "link": "https://db.netkeiba.com/horse/1987101495/",
+        "horseId": "1987101495"
+      },
+      {
+        "horseName": "マルゼンスキー",
+        "link": "https://db.netkeiba.com/horse/000a0003bd/",
+        "horseId": "000a0003bd"
+      },
+      {
+        "horseName": "レディーシラオキ",
+        "link": "https://db.netkeiba.com/horse/1978101119/",
+        "horseId": "1978101119"
+      },
+      {
+        "horseName": "キロフプリミエール Kirov Premiere(英)",
+        "link": "https://db.netkeiba.com/horse/000a0064dc/",
+        "horseId": "000a0064dc"
+      },
+      {
+        "horseName": "Sadler's Wells",
+        "link": "https://db.netkeiba.com/horse/000a00185d/",
+        "horseId": "000a00185d"
+      },
+      {
+        "horseName": "Northern Dancer",
+        "link": "https://db.netkeiba.com/horse/000a000e04/",
+        "horseId": "000a000e04"
+      },
+      {
+        "horseName": "Fairy Bridge",
+        "link": "https://db.netkeiba.com/horse/000a008892/",
+        "horseId": "000a008892"
+      },
+      {
+        "horseName": "Querida",
+        "link": "https://db.netkeiba.com/horse/000a009d2a/",
+        "horseId": "000a009d2a"
+      },
+      {
+        "horseName": "Habitat",
+        "link": "https://db.netkeiba.com/horse/000a000f2a/",
+        "horseId": "000a000f2a"
+      },
+      {
+        "horseName": "Principia",
+        "link": "https://db.netkeiba.com/horse/000a008f59/",
+        "horseId": "000a008f59"
+      },
+      {
+        "horseName": "バラーディスト",
+        "link": "https://db.netkeiba.com/horse/2016104570/",
+        "horseId": "2016104570"
+      },
+      {
+        "horseName": "ハーツクライ",
+        "link": "https://db.netkeiba.com/horse/2001103038/",
+        "horseId": "2001103038"
+      },
+      {
+        "horseName": "Hail to Reason",
+        "link": "https://db.netkeiba.com/horse/000a000f2b/",
+        "horseId": "000a000f2b"
+      },
+      {
+        "horseName": "Cosmah",
+        "link": "https://db.netkeiba.com/horse/000a007459/",
+        "horseId": "000a007459"
+      },
+      {
+        "horseName": "Understanding",
+        "link": "https://db.netkeiba.com/horse/000a0019b6/",
+        "horseId": "000a0019b6"
+      },
+      {
+        "horseName": "Mountain Flower",
+        "link": "https://db.netkeiba.com/horse/000a008c1d/",
+        "horseId": "000a008c1d"
+      },
+      {
+        "horseName": "アイリッシュダンス",
+        "link": "https://db.netkeiba.com/horse/1990104626/",
+        "horseId": "1990104626"
+      },
+      {
+        "horseName": "トニービン",
+        "link": "https://db.netkeiba.com/horse/1983109006/",
+        "horseId": "1983109006"
+      },
+      {
+        "horseName": "カンパラ",
+        "link": "https://db.netkeiba.com/horse/000a000827/",
+        "horseId": "000a000827"
+      },
+      {
+        "horseName": "Severn Bridge",
+        "link": "https://db.netkeiba.com/horse/000a00859c/",
+        "horseId": "000a00859c"
+      },
+      {
+        "horseName": "ビューパーダンス",
+        "link": "https://db.netkeiba.com/horse/000a0061b3/",
+        "horseId": "000a0061b3"
+      },
+      {
+        "horseName": "Lyphard",
+        "link": "https://db.netkeiba.com/horse/000a001205/",
+        "horseId": "000a001205"
+      },
+      {
+        "horseName": "My Bupers",
+        "link": "https://db.netkeiba.com/horse/000a0082bc/",
+        "horseId": "000a0082bc"
+      },
+      {
+        "horseName": "バラダセール Balada Sale(亜)",
+        "link": "https://db.netkeiba.com/horse/000a011fff/",
+        "horseId": "000a011fff"
+      },
+      {
+        "horseName": "Not For Sale",
+        "link": "https://db.netkeiba.com/horse/000a011fae/",
+        "horseId": "000a011fae"
+      },
+      {
+        "horseName": "Parade Marshal",
+        "link": "https://db.netkeiba.com/horse/000a002078/",
+        "horseId": "000a002078"
+      },
+      {
+        "horseName": "Caro",
+        "link": "https://db.netkeiba.com/horse/000a0010ed/",
+        "horseId": "000a0010ed"
+      },
+      {
+        "horseName": "Stepping High",
+        "link": "https://db.netkeiba.com/horse/000a008653/",
+        "horseId": "000a008653"
+      },
+      {
+        "horseName": "Love for Sale",
+        "link": "https://db.netkeiba.com/horse/000a011fb6/",
+        "horseId": "000a011fb6"
+      },
+      {
+        "horseName": "Laramie Trail",
+        "link": "https://db.netkeiba.com/horse/000a011fad/",
+        "horseId": "000a011fad"
+      },
+      {
+        "horseName": "Museliere",
+        "link": "https://db.netkeiba.com/horse/000a011fb5/",
+        "horseId": "000a011fb5"
+      },
+      {
+        "horseName": "La Balada",
+        "link": "https://db.netkeiba.com/horse/000a011fb9/",
+        "horseId": "000a011fb9"
+      },
+      {
+        "horseName": "Confidential Talk",
+        "link": "https://db.netkeiba.com/horse/000a01176c/",
+        "horseId": "000a01176c"
+      },
+      {
+        "horseName": "Damascus",
+        "link": "https://db.netkeiba.com/horse/000a0010a8/",
+        "horseId": "000a0010a8"
+      },
+      {
+        "horseName": "Confidentiality",
+        "link": "https://db.netkeiba.com/horse/000a01177c/",
+        "horseId": "000a01177c"
+      },
+      {
+        "horseName": "La Baraca",
+        "link": "https://db.netkeiba.com/horse/000a011fb8/",
+        "horseId": "000a011fb8"
+      },
+      {
+        "horseName": "Mariache",
+        "link": "https://db.netkeiba.com/horse/000a0017bc/",
+        "horseId": "000a0017bc"
+      },
+      {
+        "horseName": "La Bambuca",
+        "link": "https://db.netkeiba.com/horse/000a011fb7/",
+        "horseId": "000a011fb7"
+      }
+    ],
+    "pedigreeLevels": [
+      {
+        "generation": "第1世代",
+        "entries": [
+          {
+            "role": "対象馬",
+            "name": "サートゥルナーリア",
+            "key": "https://db.netkeiba.com/horse/2016104505/"
+          }
+        ]
+      },
+      {
+        "generation": "第2世代",
+        "entries": [
+          {
+            "role": "父",
+            "name": "ロードカナロア",
+            "key": "https://db.netkeiba.com/horse/2008103552/"
+          },
+          {
+            "role": "母",
+            "name": "キングカメハメハ",
+            "key": "https://db.netkeiba.com/horse/2001103460/"
+          }
+        ]
+      },
+      {
+        "generation": "第3世代",
+        "entries": [
+          {
+            "role": "父父",
+            "name": "Kingmambo",
+            "key": "https://db.netkeiba.com/horse/000a001d7e/"
+          },
+          {
+            "role": "父母",
+            "name": "Mr. Prospector",
+            "key": "https://db.netkeiba.com/horse/000a001607/"
+          },
+          {
+            "role": "母父",
+            "name": "Miesque",
+            "key": "https://db.netkeiba.com/horse/000a009961/"
+          },
+          {
+            "role": "母母",
+            "name": "マンファス",
+            "key": "https://db.netkeiba.com/horse/000a00680e/"
+          }
+        ]
+      },
+      {
+        "generation": "第4世代",
+        "entries": [
+          {
+            "role": "父父父",
+            "name": "ラストタイクーン",
+            "key": "https://db.netkeiba.com/horse/000a0001d6/"
+          },
+          {
+            "role": "父父母",
+            "name": "Pilot Bird",
+            "key": "https://db.netkeiba.com/horse/000a00b1e0/"
+          },
+          {
+            "role": "父母父",
+            "name": "レディブラッサム",
+            "key": "https://db.netkeiba.com/horse/1996107173/"
+          },
+          {
+            "role": "父母母",
+            "name": "Storm Cat",
+            "key": "https://db.netkeiba.com/horse/000a001a98/"
+          },
+          {
+            "role": "母父父",
+            "name": "Storm Bird",
+            "key": "https://db.netkeiba.com/horse/000a0016d4/"
+          },
+          {
+            "role": "母父母",
+            "name": "Terlingua",
+            "key": "https://db.netkeiba.com/horse/000a008e05/"
+          },
+          {
+            "role": "母母父",
+            "name": "サラトガデュー",
+            "key": "https://db.netkeiba.com/horse/000a00652e/"
+          },
+          {
+            "role": "母母母",
+            "name": "Cormorant",
+            "key": "https://db.netkeiba.com/horse/000a00177c/"
+          }
+        ]
+      }
+    ],
+    "renderedEntries": [
+      {
+        "generation": "第1世代",
+        "role": "対象馬",
+        "name": "サートゥルナーリア",
+        "branch": "self",
+        "detailBranch": "",
+        "className": "pedigree-card pedigree-card-self"
+      },
+      {
+        "generation": "第2世代",
+        "role": "父",
+        "name": "ロードカナロア",
+        "branch": "sire",
+        "detailBranch": "",
+        "className": "pedigree-card pedigree-card-sire"
+      },
+      {
+        "generation": "第2世代",
+        "role": "母",
+        "name": "キングカメハメハ",
+        "branch": "dam",
+        "detailBranch": "",
+        "className": "pedigree-card pedigree-card-dam"
+      },
+      {
+        "generation": "第3世代",
+        "role": "父父",
+        "name": "Kingmambo",
+        "branch": "sire",
+        "detailBranch": "",
+        "className": "pedigree-card pedigree-card-sire pedigree-card-gen3 pedigree-card-gen3-sire"
+      },
+      {
+        "generation": "第3世代",
+        "role": "父母",
+        "name": "Mr. Prospector",
+        "branch": "sire",
+        "detailBranch": "",
+        "className": "pedigree-card pedigree-card-sire pedigree-card-gen3 pedigree-card-gen3-sire"
+      },
+      {
+        "generation": "第3世代",
+        "role": "母父",
+        "name": "Miesque",
+        "branch": "dam",
+        "detailBranch": "",
+        "className": "pedigree-card pedigree-card-dam pedigree-card-gen3 pedigree-card-gen3-dam"
+      },
+      {
+        "generation": "第3世代",
+        "role": "母母",
+        "name": "マンファス",
+        "branch": "dam",
+        "detailBranch": "",
+        "className": "pedigree-card pedigree-card-dam pedigree-card-gen3 pedigree-card-gen3-dam"
+      },
+      {
+        "generation": "第4世代",
+        "role": "父父父",
+        "name": "ラストタイクーン",
+        "branch": "sire",
+        "detailBranch": "sire-sire",
+        "className": "pedigree-card pedigree-card-sire pedigree-card-sire-sire"
+      },
+      {
+        "generation": "第4世代",
+        "role": "父父母",
+        "name": "Pilot Bird",
+        "branch": "sire",
+        "detailBranch": "sire-sire",
+        "className": "pedigree-card pedigree-card-sire pedigree-card-sire-sire"
+      },
+      {
+        "generation": "第4世代",
+        "role": "父母父",
+        "name": "レディブラッサム",
+        "branch": "sire",
+        "detailBranch": "sire-dam",
+        "className": "pedigree-card pedigree-card-sire pedigree-card-sire-dam"
+      },
+      {
+        "generation": "第4世代",
+        "role": "父母母",
+        "name": "Storm Cat",
+        "branch": "sire",
+        "detailBranch": "sire-dam",
+        "className": "pedigree-card pedigree-card-sire pedigree-card-sire-dam"
+      },
+      {
+        "generation": "第4世代",
+        "role": "母父父",
+        "name": "Storm Bird",
+        "branch": "dam",
+        "detailBranch": "dam-sire",
+        "className": "pedigree-card pedigree-card-dam pedigree-card-dam-sire"
+      },
+      {
+        "generation": "第4世代",
+        "role": "母父母",
+        "name": "Terlingua",
+        "branch": "dam",
+        "detailBranch": "dam-sire",
+        "className": "pedigree-card pedigree-card-dam pedigree-card-dam-sire"
+      },
+      {
+        "generation": "第4世代",
+        "role": "母母父",
+        "name": "サラトガデュー",
+        "branch": "dam",
+        "detailBranch": "dam-dam",
+        "className": "pedigree-card pedigree-card-dam pedigree-card-dam-dam"
+      },
+      {
+        "generation": "第4世代",
+        "role": "母母母",
+        "name": "Cormorant",
+        "branch": "dam",
+        "detailBranch": "dam-dam",
+        "className": "pedigree-card pedigree-card-dam pedigree-card-dam-dam"
+      }
+    ]
+  }
+}
