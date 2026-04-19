@@ -10,13 +10,26 @@ function buildHorseUrl(horseId: string): string {
   return `https://db.netkeiba.com/horse/${encodeURIComponent(horseId)}`
 }
 
+function buildHorseResultUrl(horseId: string): string {
+  return `https://db.netkeiba.com/horse/result/${encodeURIComponent(horseId)}/`
+}
+
+function buildHorsePedUrl(horseId: string): string {
+  return `https://db.netkeiba.com/horse/ped/${encodeURIComponent(horseId)}/`
+}
+
 function extractHorseIdFromUrl(url: string): string | undefined {
   const match = url.match(/\/horse\/(\d+)/)
   return match?.[1]
 }
 
 function parseRaceHistory($: ReturnType<typeof load>): RaceHistoryRecord[] {
-  return $('.horse_results_box tbody tr')
+  const rows =
+    $('.horse_results_box tbody tr').length > 0
+      ? $('.horse_results_box tbody tr')
+      : $('.db_h_race_results tbody tr')
+
+  return rows
     .map((_, row) => {
       const cells = $(row)
         .find('td')
@@ -52,7 +65,9 @@ function parseRaceHistory($: ReturnType<typeof load>): RaceHistoryRecord[] {
 function parsePedigree($: ReturnType<typeof load>): PedigreeNode[] {
   const nodes: PedigreeNode[] = []
 
-  $('.horse_pedigree_box a').each((_, anchor) => {
+  const pedigreeLinks = $('.horse_pedigree_box a').length > 0 ? $('.horse_pedigree_box a') : $('.blood_table a')
+
+  pedigreeLinks.each((_, anchor) => {
     const horseName = $(anchor).text().trim()
     const href = $(anchor).attr('href')
 
@@ -74,7 +89,9 @@ function parsePedigree($: ReturnType<typeof load>): PedigreeNode[] {
 function parseProfile($: ReturnType<typeof load>): Record<string, string> {
   const profile: Record<string, string> = {}
 
-  $('.db_prof_table tr').each((_, row) => {
+  const profileRows = $('.db_prof_table tr').length > 0 ? $('.db_prof_table tr') : $('.horse_profile_table tr')
+
+  profileRows.each((_, row) => {
     const label = $(row).find('th').first().text().trim()
     const value = $(row).find('td').first().text().replace(/\s+/g, ' ').trim()
     if (label && value) {
@@ -86,18 +103,45 @@ function parseProfile($: ReturnType<typeof load>): Record<string, string> {
 }
 
 export async function fetchHorseDetails(horseId: string): Promise<HorseDetails> {
-  const url = buildHorseUrl(horseId)
-  const html = await withRetry(() => fetchHtml(url, 160))
-  const $ = load(html)
+  const mainUrl = buildHorseUrl(horseId)
+  const resultUrl = buildHorseResultUrl(horseId)
+  const pedUrl = buildHorsePedUrl(horseId)
 
-  const horseName = $('.horse_title h1').first().text().trim() || $('title').first().text().trim() || undefined
+  const [mainHtml, resultHtml, pedHtml] = await Promise.all([
+    withRetry(() => fetchHtml(mainUrl, 160)),
+    withRetry(() => fetchHtml(resultUrl, 180)),
+    withRetry(() => fetchHtml(pedUrl, 200)),
+  ])
+
+  const main$ = load(mainHtml)
+  const result$ = load(resultHtml)
+  const ped$ = load(pedHtml)
+
+  const horseName =
+    main$('.horse_title h1').first().text().trim() ||
+    main$('.horse_data_top h1').first().text().trim() ||
+    result$('.horse_title h1').first().text().trim() ||
+    ped$('.horse_title h1').first().text().trim() ||
+    main$('h1').first().text().trim() ||
+    main$('title').first().text().trim() ||
+    undefined
+
+  const raceHistory = parseRaceHistory(result$)
+  const pedigree = parsePedigree(ped$)
+  const profile = parseProfile(main$)
+
+  if (raceHistory.length === 0 && pedigree.length === 0 && Object.keys(profile).length === 0) {
+    throw new Error(
+      `Horse detail parse failed for horse ${horseId}. Titles: main=${main$('title').first().text().trim()} result=${result$('title').first().text().trim()} ped=${ped$('title').first().text().trim()}`,
+    )
+  }
 
   const details: HorseDetails = {
     horseId,
     horseName,
-    profile: parseProfile($),
-    raceHistory: parseRaceHistory($),
-    pedigree: parsePedigree($),
+    profile,
+    raceHistory,
+    pedigree,
   }
 
   await setHorseDetails(details)

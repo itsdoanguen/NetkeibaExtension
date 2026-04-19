@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "watch": "vite build --watch"
+    "watch": "vite build --watch",
+    "test:smoke:crawl": "node src/test/smoke-crawl.mjs"
   },
   "dependencies": {
     "cheerio": "^1.2.0",

@@ -5,14 +5,29 @@ import { setRaceResult } from './storage'
 import type { Horse, RaceResult } from './types'
 
 const RACE_RESULT_BASE_URL = 'https://race.netkeiba.com/race/result.html'
+const RACE_SHUTUBA_BASE_URL = 'https://race.netkeiba.com/race/shutuba.html'
 const RACE_SITE_BASE = 'https://race.netkeiba.com/'
 
 function buildRaceResultUrl(raceId: string): string {
   return `${RACE_RESULT_BASE_URL}?race_id=${encodeURIComponent(raceId)}`
 }
 
+function buildRaceShutubaUrl(raceId: string): string {
+  return `${RACE_SHUTUBA_BASE_URL}?race_id=${encodeURIComponent(raceId)}`
+}
+
 function extractHorseId(link: string): string | null {
   const match = link.match(/\/horse\/(\d+)/)
+  return match?.[1] ?? null
+}
+
+function extractJockeyId(link: string): string | null {
+  const match = link.match(/\/jockey\/(?:result\/recent\/)?(\d+)/)
+  return match?.[1] ?? null
+}
+
+function extractTrainerId(link: string): string | null {
+  const match = link.match(/\/trainer\/(?:result\/recent\/)?(\d+)/)
   return match?.[1] ?? null
 }
 
@@ -21,21 +36,126 @@ function getCellText(cells: string[], index: number): string | undefined {
   return value ? value : undefined
 }
 
-export async function fetchRaceHorses(raceId: string): Promise<RaceResult> {
-  const url = buildRaceResultUrl(raceId)
-  const html = await withRetry(() => fetchHtml(url, 140))
-  const $ = load(html)
+function normalizeText(value: string): string {
+  return value.replace(/\s+/g, ' ').trim()
+}
 
+function parseSexAge(sexAge: string | undefined): { horseSex?: string; horseAge?: string } {
+  if (!sexAge) {
+    return {}
+  }
+
+  const match = sexAge.match(/^([牡牝セ])\s*(\d+)/)
+  return {
+    horseSex: match?.[1],
+    horseAge: match?.[2],
+  }
+}
+
+function parseBodyWeight(value: string | undefined): { bodyWeight?: string; bodyWeightDiff?: string } {
+  if (!value) {
+    return {}
+  }
+
+  const match = value.match(/(\d+)\s*\(([-+]?\d+)\)/)
+  if (match) {
+    return {
+      bodyWeight: match[1],
+      bodyWeightDiff: match[2],
+    }
+  }
+
+  const plain = value.match(/\d+/)?.[0]
+  return {
+    bodyWeight: plain,
+    bodyWeightDiff: undefined,
+  }
+}
+
+function findCellByClass(
+  cells: Array<{ text?: string; className: string }>,
+  classPattern: RegExp,
+): { text?: string; className: string } | undefined {
+  return cells.find((cell) => classPattern.test(cell.className))
+}
+
+function findCellTextByClass(cells: Array<{ text?: string; className: string }>, classPattern: RegExp): string | undefined {
+  return findCellByClass(cells, classPattern)?.text
+}
+
+function parseRaceInfo($: ReturnType<typeof load>, sourcePage: 'result' | 'shutuba'): RaceResult['raceInfo'] {
+  const raceData01 = normalizeText($('.RaceData01').first().text()) || undefined
+  const raceData02 = normalizeText($('.RaceData02').first().text()) || undefined
+
+  const startTime = raceData01?.match(/(\d{1,2}:\d{2})/)?.[1]
+  const surfaceDistance = raceData01?.match(/([芝ダ障])\s*(\d+)m/)
+  const turnDirection = raceData01?.match(/\(([^)]+)\)/)?.[1]
+  const weather = raceData01?.match(/天候\s*[:：]\s*([^\s/]+)/)?.[1]
+  const trackCondition = raceData01?.match(/馬場\s*[:：]\s*([^\s/]+)/)?.[1]
+  const fieldSize = raceData02?.match(/(\d+)頭/)?.[1]
+
+  return {
+    sourcePage,
+    startTime,
+    distance: surfaceDistance?.[2],
+    surfaceType: surfaceDistance?.[1],
+    turnDirection,
+    weather,
+    trackCondition,
+    fieldSize,
+    raceData01,
+    raceData02,
+  }
+}
+
+function getHorseRows($: ReturnType<typeof load>, mode: 'result' | 'shutuba') {
+  if (mode === 'result') {
+    const resultRows = $('.ResultTableWrap tbody tr.HorseList')
+    if (resultRows.length > 0) {
+      return resultRows
+    }
+
+    return $('.RaceTable01.RaceCommon_Table tbody tr.HorseList')
+  }
+
+  const shutubaRows = $('.Shutuba_Table tbody tr.HorseList')
+  if (shutubaRows.length > 0) {
+    return shutubaRows
+  }
+
+  return $('.RaceTable01.RaceCommon_Table tbody tr.HorseList')
+}
+
+function parseHorseRows(
+  $: ReturnType<typeof load>,
+  rows: ReturnType<typeof $>,
+  raceId: string,
+  mode: 'result' | 'shutuba',
+): Horse[] {
   const horses: Horse[] = []
-  const raceName = $('title').first().text().trim() || undefined
+  const seenHorseIds = new Set<string>()
 
-  $('.ResultTableWrap tbody tr').each((_, row) => {
-    const cells = $(row)
-      .find('td')
-      .map((__, cell) => $(cell).text().replace(/\s+/g, ' ').trim())
+  rows.each((_, row) => {
+    const rowCells = $(row).find('td')
+    const cells = rowCells
+      .map((__, cell) => normalizeText($(cell).text()))
       .get()
 
-    const horseAnchor = $(row).find('.Horse_Name a, td.Horse_Name a').first()
+    const cellsWithClass = rowCells
+      .map((__, cell) => ({
+        text: normalizeText($(cell).text()) || undefined,
+        className: $(cell).attr('class') ?? '',
+      }))
+      .get()
+
+    const horseAnchor =
+      $(row).find('.Horse_Name a, td.Horse_Name a, td.HorseInfo a, .HorseInfo a').first().length > 0
+        ? $(row).find('.Horse_Name a, td.Horse_Name a, td.HorseInfo a, .HorseInfo a').first()
+        : $(row).find('a[href*="/horse/"]').first()
+
+    const jockeyAnchor = $(row).find('td.Jockey a[href*="/jockey/"]').first()
+    const trainerAnchor = $(row).find('td.Trainer a[href*="/trainer/"]').first()
+
     const horseName = horseAnchor.text().trim()
     const rawHref = horseAnchor.attr('href')
 
@@ -45,35 +165,184 @@ export async function fetchRaceHorses(raceId: string): Promise<RaceResult> {
 
     const horseDetailLink = toAbsoluteUrl(RACE_SITE_BASE, rawHref)
     const horseId = extractHorseId(horseDetailLink)
+    const jockeyLink = jockeyAnchor.attr('href') ? toAbsoluteUrl(RACE_SITE_BASE, jockeyAnchor.attr('href') as string) : undefined
+    const trainerLink = trainerAnchor.attr('href') ? toAbsoluteUrl(RACE_SITE_BASE, trainerAnchor.attr('href') as string) : undefined
+    const jockeyId = jockeyLink ? extractJockeyId(jockeyLink) ?? undefined : undefined
+    const trainerId = trainerLink ? extractTrainerId(trainerLink) ?? undefined : undefined
 
-    if (!horseId) {
+    if (!horseId || seenHorseIds.has(horseId)) {
       return
     }
+    seenHorseIds.add(horseId)
+
+    const sexAge =
+      findCellTextByClass(cellsWithClass, /Barei|Horse_Info\s+Txt_C/i) ||
+      getCellText(cells, mode === 'result' ? 4 : 4)
+
+    const { horseSex, horseAge } = parseSexAge(sexAge)
+
+    const bodyWeightRaw =
+      findCellTextByClass(cellsWithClass, /\bWeight\b/i) ||
+      getCellText(cells, mode === 'result' ? 13 : 8)
+    const { bodyWeight, bodyWeightDiff } = parseBodyWeight(bodyWeightRaw)
+
+    const frameNumber =
+      findCellTextByClass(cellsWithClass, /\bWaku\d*\b|\bWaku\b/i) ||
+      getCellText(cells, mode === 'result' ? 1 : 0)
+
+    const horseNumber =
+      findCellTextByClass(cellsWithClass, /\bUmaban\d*\b|\bNum\s+Txt_C\b/i) ||
+      getCellText(cells, mode === 'result' ? 2 : 1)
+
+    const carriedWeight =
+      (mode === 'result'
+        ? findCellTextByClass(cellsWithClass, /\bJockey_Info\b/i)
+        : getCellText(cells, 5)) || undefined
+
+    const jockeyName =
+      findCellTextByClass(cellsWithClass, /^Jockey\b/i) ||
+      getCellText(cells, mode === 'result' ? 6 : 6)
+
+    const trainerName =
+      findCellTextByClass(cellsWithClass, /^Trainer\b/i) ||
+      getCellText(cells, mode === 'result' ? 13 : 7)
+
+    if (mode === 'result') {
+      const timeCells = cellsWithClass.filter((cell) => /\bTime\b/i.test(cell.className) && cell.text)
+      const popularity =
+        findCellTextByClass(cellsWithClass, /Odds[^]*Txt_C|\bPopular_Ninki\b/i) ||
+        getCellText(cells, 9)
+      const odds = findCellTextByClass(cellsWithClass, /\bOdds\s+Txt_R\b/i) || getCellText(cells, 10)
+
+      horses.push({
+        raceId,
+        horseId,
+        horseName,
+        horseSex,
+        horseAge,
+        horseDetailLink,
+        frameNumber,
+        horseNumber,
+        sexAge,
+        carriedWeight,
+        jockeyName,
+        jockeyId,
+        jockeyLink,
+        trainerName,
+        trainerId,
+        trainerLink,
+        finishPosition: findCellTextByClass(cellsWithClass, /Result_Num|\bRank\b/i) || getCellText(cells, 0),
+        goalTime: timeCells[0]?.text || getCellText(cells, 7),
+        margin: timeCells[1]?.text || getCellText(cells, 8),
+        passingOrder: findCellTextByClass(cellsWithClass, /PassageRate/i) || getCellText(cells, 12),
+        closing3F: timeCells[2]?.text || getCellText(cells, 11),
+        odds,
+        popularity,
+        bodyWeight,
+        bodyWeightDiff,
+        rawColumns: cells,
+      })
+      return
+    }
+
+    const popularity =
+      findCellTextByClass(cellsWithClass, /\bPopular_Ninki\b/i) ||
+      getCellText(cells, 10)
+    const odds =
+      findCellTextByClass(cellsWithClass, /Txt_R\s+Popular|\bOdds\b/i) ||
+      getCellText(cells, 9)
 
     horses.push({
       raceId,
       horseId,
       horseName,
+      horseSex,
+      horseAge,
       horseDetailLink,
-      finishPosition: getCellText(cells, 0),
-      frameNumber: getCellText(cells, 1),
-      horseNumber: getCellText(cells, 2),
-      sexAge: getCellText(cells, 4),
-      carriedWeight: getCellText(cells, 5),
-      jockeyName: getCellText(cells, 6),
-      goalTime: getCellText(cells, 7),
-      margin: getCellText(cells, 8),
-      passingOrder: getCellText(cells, 9),
-      closing3F: getCellText(cells, 10),
-      odds: getCellText(cells, 11),
-      popularity: getCellText(cells, 12),
-      bodyWeight: getCellText(cells, 13),
-      trainerName: getCellText(cells, 18),
+      frameNumber,
+      horseNumber,
+      sexAge,
+      carriedWeight,
+      jockeyName,
+      jockeyId,
+      jockeyLink,
+      trainerName,
+      trainerId,
+      trainerLink,
+      finishPosition: undefined,
+      odds,
+      popularity,
+      bodyWeight,
+      bodyWeightDiff,
+      note0: findCellTextByClass(cellsWithClass, /\bNote0\b/i),
+      note1: findCellTextByClass(cellsWithClass, /\bNote1\b/i),
       rawColumns: cells,
     })
   })
 
-  const raceResult: RaceResult = { raceId, raceName, horses }
+  return horses
+}
+
+export async function fetchRaceHorses(raceId: string): Promise<RaceResult> {
+  const resultUrl = buildRaceResultUrl(raceId)
+  const resultHtml = await withRetry(() => fetchHtml(resultUrl, 140))
+  const result$ = load(resultHtml)
+
+  const resultRaceName =
+    normalizeText(result$('.RaceName').first().text()) ||
+    normalizeText(result$('title').first().text()) ||
+    undefined
+  const resultRaceNumber = normalizeText(result$('.RaceNum').first().text()) || undefined
+  const resultRows = getHorseRows(result$, 'result')
+  const resultHorses = parseHorseRows(result$, resultRows, raceId, 'result')
+  const resultInfo = parseRaceInfo(result$, 'result')
+
+  const shouldTryShutuba = resultHorses.length < 2
+
+  if (!shouldTryShutuba) {
+    const raceResult: RaceResult = {
+      raceId,
+      raceName: resultRaceName,
+      raceNumber: resultRaceNumber,
+      raceInfo: resultInfo,
+      horses: resultHorses,
+    }
+    await setRaceResult(raceResult)
+    return raceResult
+  }
+
+  const shutubaUrl = buildRaceShutubaUrl(raceId)
+  const shutubaHtml = await withRetry(() => fetchHtml(shutubaUrl, 160))
+  const shutuba$ = load(shutubaHtml)
+
+  const shutubaRaceName =
+    normalizeText(shutuba$('.RaceName').first().text()) ||
+    normalizeText(shutuba$('title').first().text()) ||
+    undefined
+  const shutubaRaceNumber = normalizeText(shutuba$('.RaceNum').first().text()) || undefined
+  const shutubaRows = getHorseRows(shutuba$, 'shutuba')
+  const shutubaHorses = parseHorseRows(shutuba$, shutubaRows, raceId, 'shutuba')
+  const shutubaInfo = parseRaceInfo(shutuba$, 'shutuba')
+
+  const useShutuba = shutubaHorses.length > resultHorses.length
+  const horses = useShutuba ? shutubaHorses : resultHorses
+  const raceName = useShutuba ? shutubaRaceName : resultRaceName
+  const raceNumber = useShutuba ? shutubaRaceNumber : resultRaceNumber
+  const raceInfo = useShutuba ? shutubaInfo : resultInfo
+
+  if (horses.length === 0) {
+    throw new Error(
+      `No horses parsed for race ${raceId}. Result rows: ${resultRows.length}, shutuba rows: ${shutubaRows.length}.`,
+    )
+  }
+
+  const raceResult: RaceResult = {
+    raceId,
+    raceName,
+    raceNumber,
+    raceInfo,
+    horses,
+  }
   await setRaceResult(raceResult)
 
   return raceResult

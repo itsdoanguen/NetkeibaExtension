@@ -1,8 +1,97 @@
 const DEFAULT_HEADERS: HeadersInit = {
   'user-agent':
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
-  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
   'accept-language': 'ja,en-US;q=0.9,en;q=0.8',
+  referer: 'https://race.netkeiba.com/',
+}
+
+const CHALLENGE_MARKERS = [
+  'captcha',
+  'challenge',
+  'access denied',
+  'forbidden',
+  '異常',
+]
+
+const DECODER_CANDIDATES = ['utf-8', 'shift_jis', 'euc-jp'] as const
+
+function extractCharset(contentType: string | null): string | null {
+  if (!contentType) {
+    return null
+  }
+
+  const match = contentType.match(/charset\s*=\s*([^;]+)/i)
+  return match?.[1]?.trim().toLowerCase() ?? null
+}
+
+function decodeWithCharset(buffer: ArrayBuffer, charset: string): string | null {
+  try {
+    return new TextDecoder(charset).decode(buffer)
+  } catch {
+    return null
+  }
+}
+
+function countReplacements(text: string): number {
+  return (text.match(/\uFFFD/g) ?? []).length
+}
+
+function countJapanese(text: string): number {
+  return (text.match(/[\u3040-\u30ff\u3400-\u9fff]/g) ?? []).length
+}
+
+function decodeHtmlBuffer(buffer: ArrayBuffer, contentType: string | null): string {
+  const preferredCharset = extractCharset(contentType)
+  const tried = new Set<string>()
+  const decodedCandidates: Array<{ charset: string; text: string; replacements: number; japanese: number }> = []
+
+  const charsetOrder = [
+    ...(preferredCharset ? [preferredCharset] : []),
+    ...DECODER_CANDIDATES,
+  ]
+
+  for (const charset of charsetOrder) {
+    if (!charset || tried.has(charset)) {
+      continue
+    }
+    tried.add(charset)
+
+    const text = decodeWithCharset(buffer, charset)
+    if (!text) {
+      continue
+    }
+
+    decodedCandidates.push({
+      charset,
+      text,
+      replacements: countReplacements(text),
+      japanese: countJapanese(text),
+    })
+  }
+
+  if (decodedCandidates.length === 0) {
+    return new TextDecoder('utf-8').decode(buffer)
+  }
+
+  decodedCandidates.sort((a, b) => {
+    if (a.replacements !== b.replacements) {
+      return a.replacements - b.replacements
+    }
+    return b.japanese - a.japanese
+  })
+
+  return decodedCandidates[0].text
+}
+
+function detectChallengePage(html: string): string | null {
+  const lower = html.toLowerCase()
+  for (const marker of CHALLENGE_MARKERS) {
+    if (lower.includes(marker)) {
+      return marker
+    }
+  }
+  return null
 }
 
 export async function sleep(ms: number): Promise<void> {
@@ -17,14 +106,21 @@ export async function fetchHtml(url: string, delayMs = 0): Promise<string> {
   const response = await fetch(url, {
     method: 'GET',
     headers: DEFAULT_HEADERS,
-    credentials: 'omit',
+    credentials: 'include',
   })
 
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status} ${response.statusText} for ${url}`)
   }
 
-  return response.text()
+  const buffer = await response.arrayBuffer()
+  const html = decodeHtmlBuffer(buffer, response.headers.get('content-type'))
+  const challengeMarker = detectChallengePage(html)
+  if (challengeMarker) {
+    throw new Error(`Potential anti-bot page detected (${challengeMarker}) for ${url}`)
+  }
+
+  return html
 }
 
 export function toAbsoluteUrl(baseUrl: string, maybeRelativeUrl: string): string {
@@ -43,6 +139,12 @@ export async function withRetry<T>(
       return await fn()
     } catch (error) {
       lastError = error
+      // Keep logs concise but explicit for sidepanel debugging.
+      console.warn(
+        `[crawl] attempt ${attempt + 1}/${retries + 1} failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      )
       if (attempt === retries) {
         break
       }

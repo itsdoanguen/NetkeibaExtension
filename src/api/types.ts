@@ -13,8 +13,14 @@ export interface Horse {
   horseNumber?: string
   frameNumber?: string
   horseName: string
+  horseSex?: string
+  horseAge?: string
   jockeyName?: string
+  jockeyId?: string
+  jockeyLink?: string
   trainerName?: string
+  trainerId?: string
+  trainerLink?: string
   finishPosition?: string
   odds?: string
   popularity?: string
@@ -26,6 +32,8 @@ export interface Horse {
   margin?: string
   passingOrder?: string
   closing3F?: string
+  note0?: string
+  note1?: string
   rawColumns: string[]
   horseDetailLink: string
 }
@@ -33,6 +41,19 @@ export interface Horse {
 export interface RaceResult {
   raceId: string
   raceName?: string
+  raceNumber?: string
+  raceInfo?: {
+    sourcePage: 'result' | 'shutuba'
+    startTime?: string
+    distance?: string
+    surfaceType?: string
+    turnDirection?: string
+    weather?: string
+    trackCondition?: string
+    fieldSize?: string
+    raceData01?: string
+    raceData02?: string
+  }
   horses: Horse[]
 }
 
