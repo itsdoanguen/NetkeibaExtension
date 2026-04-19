@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import './styles.css'
 import Dropdown from './components/Dropdown.jsx'
 import OddsTable from './components/OddsTable.jsx'
+import HorseDetailsPanel from './components/HorseDetailsPanel.jsx'
 
 function App() {
+  const [selectedRunner, setSelectedRunner] = useState(null)
+
   const rows = [
     { no: 1, horse: 'Equinox', jockey: 'C. Lemaire', odds: '1.8', featured: true },
     { no: 4, horse: 'Liberty Island', jockey: 'Y. Kawada', odds: '3.5' },
@@ -43,13 +47,19 @@ function App() {
             <span className="live-chip">LIVE</span>
           </div>
 
-          <OddsTable rows={rows} />
+          <OddsTable rows={rows} onRunnerClick={setSelectedRunner} />
         </section>
       </main>
 
       <footer className="tracker-footer surface-highest">
         <span className="dot" /> Updated 12 sec ago
       </footer>
+
+      <HorseDetailsPanel
+        isOpen={Boolean(selectedRunner)}
+        runner={selectedRunner}
+        onClose={() => setSelectedRunner(null)}
+      />
     </div>
   )
 }

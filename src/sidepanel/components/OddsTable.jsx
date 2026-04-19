@@ -1,4 +1,4 @@
-function OddsTable({ rows }) {
+function OddsTable({ rows, onRunnerClick }) {
   return (
     <>
       <div className="odds-header" role="row">
@@ -15,10 +15,15 @@ function OddsTable({ rows }) {
             role="row"
           >
             <div className="rank">{row.no}</div>
-            <div className="runner">
+            <button
+              type="button"
+              className="runner runner-btn"
+              onClick={() => onRunnerClick?.(row)}
+              aria-label={`Open details for ${row.horse}`}
+            >
               <p className="horse">{row.horse}</p>
               <p className="jockey">{row.jockey}</p>
-            </div>
+            </button>
             <p className={`price${row.featured ? ' top' : ''}`}>{row.odds}</p>
           </article>
         ))}
