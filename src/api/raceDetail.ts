@@ -187,11 +187,15 @@ function parseHorseRows(
     const { bodyWeight, bodyWeightDiff } = parseBodyWeight(bodyWeightRaw)
 
     const frameNumber =
-      findCellTextByClass(cellsWithClass, /\bWaku\d*\b|\bWaku\b/i) ||
+      (mode === 'result'
+        ? findCellTextByClass(cellsWithClass, /\bNum\s+Waku\d+\b|\bWaku\d+\b/i)
+        : findCellTextByClass(cellsWithClass, /\bWaku\d+\b/i)) ||
       getCellText(cells, mode === 'result' ? 1 : 0)
 
     const horseNumber =
-      findCellTextByClass(cellsWithClass, /\bUmaban\d*\b|\bNum\s+Txt_C\b/i) ||
+      (mode === 'result'
+        ? findCellTextByClass(cellsWithClass, /\bNum\s+Txt_C\b/i)
+        : findCellTextByClass(cellsWithClass, /\bUmaban\d+\b/i)) ||
       getCellText(cells, mode === 'result' ? 2 : 1)
 
     const carriedWeight =
@@ -210,7 +214,7 @@ function parseHorseRows(
     if (mode === 'result') {
       const timeCells = cellsWithClass.filter((cell) => /\bTime\b/i.test(cell.className) && cell.text)
       const popularity =
-        findCellTextByClass(cellsWithClass, /Odds[^]*Txt_C|\bPopular_Ninki\b/i) ||
+        findCellTextByClass(cellsWithClass, /\bOdds\b[^]*\bTxt_C\b/i) ||
         getCellText(cells, 9)
       const odds = findCellTextByClass(cellsWithClass, /\bOdds\s+Txt_R\b/i) || getCellText(cells, 10)
 

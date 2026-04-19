@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import './styles.css'
 import Dropdown from './components/Dropdown.jsx'
+import HorseDetailsPanel from './components/HorseDetailsPanel.jsx'
 import OddsTable from './components/OddsTable.jsx'
 import { fetchHorseDetails, fetchRaceHorses, fetchRaceList, runPipeline } from '../api'
 
@@ -11,17 +12,15 @@ function App() {
   const [selectedRaceId, setSelectedRaceId] = useState('')
   const [raceResult, setRaceResult] = useState(null)
   const [selectedHorseId, setSelectedHorseId] = useState('')
+  const [isHorseDetailsOpen, setIsHorseDetailsOpen] = useState(false)
   const [horseDetails, setHorseDetails] = useState(null)
+  const [horseDetailsLoading, setHorseDetailsLoading] = useState(false)
+  const [horseDetailsError, setHorseDetailsError] = useState('')
   const [pipelineMessage, setPipelineMessage] = useState('')
   const [loadingLabel, setLoadingLabel] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
   const horses = raceResult?.horses ?? []
-
-  const selectedHorse = useMemo(
-    () => horses.find((horse) => horse.horseId === selectedHorseId),
-    [horses, selectedHorseId],
-  )
 
   const trackOptions = useMemo(() => {
     const values = races
@@ -46,25 +45,35 @@ function App() {
     [filteredRaces],
   )
 
-  const horseOptions = useMemo(
-    () =>
-      horses.map((horse) => ({
-        value: horse.horseId,
-        label: `${horse.horseNumber ? `${horse.horseNumber}. ` : ''}${horse.horseName}`,
-      })),
-    [horses],
-  )
-
   const oddsRows = useMemo(
     () =>
       horses.map((horse, index) => ({
+        horseId: horse.horseId,
         no: horse.horseNumber || String(index + 1),
         horse: horse.horseName,
         jockey: horse.jockeyName || '-',
         odds: horse.odds || '-',
+        gate: horse.frameNumber ?? '-',
+        silk: horse.horseNumber ?? '-',
+        sexAge: horse.sexAge ?? '-',
+        carriedWeight: horse.carriedWeight ?? '-',
+        trainer: horse.trainerName ?? '-',
+        popularity: horse.popularity ?? '-',
+        bodyWeight: formatBodyWeight(horse),
+        finish: horse.finishPosition ?? '-',
+        goalTime: horse.goalTime ?? '-',
+        margin: horse.margin ?? '-',
+        passingOrder: horse.passingOrder ?? '-',
+        closing3F: horse.closing3F ?? '-',
+        note: [horse.note0, horse.note1].filter(Boolean).join(' / ') || '-',
         featured: horse.horseId === selectedHorseId,
       })),
     [horses, selectedHorseId],
+  )
+
+  const selectedRunner = useMemo(
+    () => oddsRows.find((row) => row.horseId === selectedHorseId) ?? null,
+    [oddsRows, selectedHorseId],
   )
 
   useEffect(() => {
@@ -81,6 +90,8 @@ function App() {
   useEffect(() => {
     if (horses.length === 0) {
       setSelectedHorseId('')
+      setHorseDetails(null)
+      setHorseDetailsError('')
       return
     }
 
@@ -88,6 +99,40 @@ function App() {
       setSelectedHorseId(horses[0].horseId)
     }
   }, [horses, selectedHorseId])
+
+  useEffect(() => {
+    if (!isHorseDetailsOpen || !selectedHorseId) {
+      return
+    }
+
+    let isCancelled = false
+
+    async function loadHorseDetails() {
+      setHorseDetailsLoading(true)
+      setHorseDetailsError('')
+      try {
+        const result = await fetchHorseDetails(selectedHorseId)
+        if (!isCancelled) {
+          setHorseDetails(result)
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          setHorseDetails(null)
+          setHorseDetailsError(error instanceof Error ? error.message : 'Failed to load horse details')
+        }
+      } finally {
+        if (!isCancelled) {
+          setHorseDetailsLoading(false)
+        }
+      }
+    }
+
+    loadHorseDetails()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [isHorseDetailsOpen, selectedHorseId])
 
   async function handleLoadRaces() {
     setLoadingLabel('Loading races...')
@@ -99,7 +144,9 @@ function App() {
       setSelectedTrack(data[0]?.trackName ?? '')
       setRaceResult(null)
       setSelectedHorseId('')
+      setIsHorseDetailsOpen(false)
       setHorseDetails(null)
+      setHorseDetailsError('')
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Failed to load races')
     } finally {
@@ -121,28 +168,11 @@ function App() {
       setRaceResult(result)
       const firstHorseId = result.horses[0]?.horseId ?? ''
       setSelectedHorseId(firstHorseId)
+      setIsHorseDetailsOpen(false)
       setHorseDetails(null)
+      setHorseDetailsError('')
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Failed to load horses')
-    } finally {
-      setLoadingLabel('')
-    }
-  }
-
-  async function handleLoadHorseDetails() {
-    if (!selectedHorseId) {
-      setErrorMessage('Please select a horse first.')
-      return
-    }
-
-    setLoadingLabel(`Loading horse details: ${selectedHorseId}...`)
-    setErrorMessage('')
-    setPipelineMessage('')
-    try {
-      const result = await fetchHorseDetails(selectedHorseId)
-      setHorseDetails(result)
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to load horse details')
     } finally {
       setLoadingLabel('')
     }
@@ -161,6 +191,14 @@ function App() {
     } finally {
       setLoadingLabel('')
     }
+  }
+
+  function formatBodyWeight(horse) {
+    if (!horse?.bodyWeight) {
+      return '-'
+    }
+
+    return `${horse.bodyWeight}${horse.bodyWeightDiff ? ` (${horse.bodyWeightDiff})` : ''}`
   }
 
   return (
@@ -215,8 +253,8 @@ function App() {
 
         <section className="odds-section">
           <div className="odds-title-row">
-            <h2>Current Odds</h2>
-            <span className="live-chip">LIVE</span>
+            <h2>現在のオッズ</h2>
+            <span className="live-chip">ライブ</span>
           </div>
 
           {raceResult && (
@@ -255,111 +293,30 @@ function App() {
             </section>
           )}
 
-          <OddsTable rows={oddsRows} />
-
-          <div className="horse-controls">
-            <Dropdown
-              label="Horse"
-              value={selectedHorseId}
-              options={horseOptions}
-              onChange={setSelectedHorseId}
-              placeholder="Select horse"
-              disabled={Boolean(loadingLabel) || horseOptions.length === 0}
-            />
-            <button
-              className="fetch-btn"
-              type="button"
-              onClick={handleLoadHorseDetails}
-              disabled={Boolean(loadingLabel) || !selectedHorseId}
-            >
-              View Horse Detail
-            </button>
-          </div>
+          <OddsTable
+            rows={oddsRows}
+            onRunnerClick={(row) => {
+              if (row?.horseId) {
+                setSelectedHorseId(row.horseId)
+                setIsHorseDetailsOpen(true)
+              }
+            }}
+          />
         </section>
 
         {loadingLabel && <p className="status loading">{loadingLabel}</p>}
         {errorMessage && <p className="status error">{errorMessage}</p>}
         {pipelineMessage && <p className="status success">{pipelineMessage}</p>}
 
-        <section className="detail-card surface-low ghost-border">
-          <h3>Horse Details</h3>
-          {!selectedHorse && <p className="placeholder">Select a horse then click "View Horse Detail".</p>}
+        <HorseDetailsPanel
+          isOpen={isHorseDetailsOpen}
+          runner={selectedRunner}
+          details={horseDetails}
+          isLoading={horseDetailsLoading}
+          errorMessage={horseDetailsError}
+          onClose={() => setIsHorseDetailsOpen(false)}
+        />
 
-          {selectedHorse && (
-            <div className="detail-grid" style={{ marginBottom: '10px' }}>
-              <p>
-                <strong>Race horse:</strong> {selectedHorse.horseNumber ? `${selectedHorse.horseNumber}. ` : ''}
-                {selectedHorse.horseName}
-              </p>
-              <p>
-                <strong>Frame:</strong> {selectedHorse.frameNumber ?? '-'}
-              </p>
-              <p>
-                <strong>Sex/Age:</strong> {selectedHorse.sexAge ?? '-'}
-              </p>
-              <p>
-                <strong>Carried weight:</strong> {selectedHorse.carriedWeight ?? '-'}
-              </p>
-              <p>
-                <strong>Jockey:</strong> {selectedHorse.jockeyName ?? '-'}
-              </p>
-              <p>
-                <strong>Trainer:</strong> {selectedHorse.trainerName ?? '-'}
-              </p>
-              <p>
-                <strong>Odds:</strong> {selectedHorse.odds ?? '-'}
-              </p>
-              <p>
-                <strong>Popularity:</strong> {selectedHorse.popularity ?? '-'}
-              </p>
-              <p>
-                <strong>Body weight:</strong>{' '}
-                {selectedHorse.bodyWeight
-                  ? `${selectedHorse.bodyWeight}${selectedHorse.bodyWeightDiff ? ` (${selectedHorse.bodyWeightDiff})` : ''}`
-                  : '-'}
-              </p>
-              <p>
-                <strong>Finish:</strong> {selectedHorse.finishPosition ?? '-'}
-              </p>
-              <p>
-                <strong>Goal time:</strong> {selectedHorse.goalTime ?? '-'}
-              </p>
-              <p>
-                <strong>Margin:</strong> {selectedHorse.margin ?? '-'}
-              </p>
-              <p>
-                <strong>Passing order:</strong> {selectedHorse.passingOrder ?? '-'}
-              </p>
-              <p>
-                <strong>Closing 3F:</strong> {selectedHorse.closing3F ?? '-'}
-              </p>
-              <p>
-                <strong>Note:</strong> {[selectedHorse.note0, selectedHorse.note1].filter(Boolean).join(' / ') || '-'}
-              </p>
-            </div>
-          )}
-
-          {!horseDetails && selectedHorse && (
-            <p className="placeholder">Race page data loaded. Click "View Horse Detail" for profile + pedigree.</p>
-          )}
-
-          {horseDetails && (
-            <div className="detail-grid">
-              <p>
-                <strong>ID:</strong> {horseDetails.horseId}
-              </p>
-              <p>
-                <strong>Name:</strong> {horseDetails.horseName ?? selectedHorse?.horseName ?? '-'}
-              </p>
-              <p>
-                <strong>Race history rows:</strong> {horseDetails.raceHistory.length}
-              </p>
-              <p>
-                <strong>Pedigree links:</strong> {horseDetails.pedigree.length}
-              </p>
-            </div>
-          )}
-        </section>
       </main>
     </div>
   )

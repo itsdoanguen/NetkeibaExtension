@@ -23,43 +23,87 @@ function extractHorseIdFromUrl(url: string): string | undefined {
   return match?.[1]
 }
 
+function normalizeText(value: string): string {
+  return value.replace(/\s+/g, ' ').trim()
+}
+
+function buildHeaderMap($: ReturnType<typeof load>, rows: ReturnType<typeof $>): string[] {
+  const table = rows.first().closest('table')
+  if (!table.length) {
+    return []
+  }
+
+  const headers = table
+    .find('thead th')
+    .map((_, th) => normalizeText($(th).text()))
+    .get()
+
+  return headers
+}
+
+function findValueByHeader(
+  headerMap: string[],
+  cells: string[],
+  patterns: RegExp[],
+  fallbackIndex?: number,
+): string | undefined {
+  for (const pattern of patterns) {
+    const index = headerMap.findIndex((header) => pattern.test(header))
+    if (index >= 0) {
+      const value = cells[index]
+      if (value) {
+        return value
+      }
+    }
+  }
+
+  if (typeof fallbackIndex === 'number') {
+    return cells[fallbackIndex]
+  }
+
+  return undefined
+}
+
 function parseRaceHistory($: ReturnType<typeof load>): RaceHistoryRecord[] {
   const rows =
     $('.horse_results_box tbody tr').length > 0
       ? $('.horse_results_box tbody tr')
       : $('.db_h_race_results tbody tr')
 
+  const headerMap = buildHeaderMap($, rows)
+
   return rows
     .map((_, row) => {
       const cells = $(row)
         .find('td')
-        .map((__, cell) => $(cell).text().replace(/\s+/g, ' ').trim())
+        .map((__, cell) => normalizeText($(cell).text()))
         .get()
 
       return {
-        date: cells[0],
-        venue: cells[1],
-        weather: cells[2],
-        raceNumber: cells[3],
-        raceName: cells[4],
-        raceClass: cells[5],
-        horseNumber: cells[7],
-        jockey: cells[12],
-        carriedWeight: cells[13],
-        odds: cells[14],
-        popularity: cells[15],
-        finishPosition: cells[11],
-        goalTime: cells[17],
-        margin: cells[18],
-        passingOrder: cells[20],
-        closing3F: cells[21],
-        bodyWeight: cells[23],
-        winnerOrTopHorse: cells[26],
-        prize: cells[27],
+        date: findValueByHeader(headerMap, cells, [/^日付$/], 0),
+        venue: findValueByHeader(headerMap, cells, [/開催/, /^場$/], 1),
+        weather: findValueByHeader(headerMap, cells, [/天候/], 2),
+        raceNumber: findValueByHeader(headerMap, cells, [/R$/], 3),
+        raceName: findValueByHeader(headerMap, cells, [/レース名/, /レース/, /レース名/], 4),
+        raceClass: findValueByHeader(headerMap, cells, [/クラス/, /条件/], 5),
+        horseNumber: findValueByHeader(headerMap, cells, [/馬番/], 7),
+        jockey: findValueByHeader(headerMap, cells, [/騎手/], 12),
+        carriedWeight: findValueByHeader(headerMap, cells, [/斤量/], 13),
+        odds: findValueByHeader(headerMap, cells, [/オッズ/], 14),
+        popularity: findValueByHeader(headerMap, cells, [/人気/], 15),
+        finishPosition: findValueByHeader(headerMap, cells, [/着順/], 11),
+        goalTime: findValueByHeader(headerMap, cells, [/タイム/], 17),
+        margin: findValueByHeader(headerMap, cells, [/着差/], 18),
+        passingOrder: findValueByHeader(headerMap, cells, [/通過/], 20),
+        closing3F: findValueByHeader(headerMap, cells, [/上り/], 21),
+        bodyWeight: findValueByHeader(headerMap, cells, [/馬体重/], 23),
+        winnerOrTopHorse: findValueByHeader(headerMap, cells, [/1着馬/, /勝ち馬/], 26),
+        prize: findValueByHeader(headerMap, cells, [/賞金/], 27),
         rawColumns: cells,
       }
     })
     .get()
+    .filter((row) => Boolean(row.date || row.raceName || row.finishPosition))
 }
 
 function parsePedigree($: ReturnType<typeof load>): PedigreeNode[] {
@@ -93,11 +137,20 @@ function parseProfile($: ReturnType<typeof load>): Record<string, string> {
 
   profileRows.each((_, row) => {
     const label = $(row).find('th').first().text().trim()
-    const value = $(row).find('td').first().text().replace(/\s+/g, ' ').trim()
+    const value = normalizeText($(row).find('td').first().text())
     if (label && value) {
       profile[label] = value
     }
   })
+
+  if (Object.keys(profile).length === 0) {
+    $('.horse_profile .data_intro p').each((_, p) => {
+      const value = normalizeText($(p).text())
+      if (value) {
+        profile[`intro_${String(_ + 1)}`] = value
+      }
+    })
+  }
 
   return profile
 }
@@ -119,8 +172,10 @@ export async function fetchHorseDetails(horseId: string): Promise<HorseDetails> 
 
   const horseName =
     main$('.horse_title h1').first().text().trim() ||
+    main$('.horse_data h1').first().text().trim() ||
     main$('.horse_data_top h1').first().text().trim() ||
     result$('.horse_title h1').first().text().trim() ||
+    result$('.horse_title').first().text().trim() ||
     ped$('.horse_title h1').first().text().trim() ||
     main$('h1').first().text().trim() ||
     main$('title').first().text().trim() ||
