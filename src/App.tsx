@@ -1,120 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const rows = [
+    { no: 1, horse: 'Equinox', jockey: 'C. Lemaire', odds: '1.8', featured: true },
+    { no: 4, horse: 'Liberty Island', jockey: 'Y. Kawada', odds: '3.5' },
+    { no: 7, horse: 'Do Deuce', jockey: 'Y. Take', odds: '6.2' },
+    { no: 11, horse: 'Stars on Earth', jockey: 'W. Buick', odds: '12.0' },
+    { no: 13, horse: 'Titleholder', jockey: 'R. Moore', odds: '18.4' },
+  ]
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="tracker">
+      <header className="tracker-header surface-highest">
+        <h1>JRA Odds Tracker</h1>
+        <div className="header-actions" aria-label="Header actions">
+          <button type="button" className="icon-btn" aria-label="Refresh">
+            ↻
+          </button>
+          <button type="button" className="icon-btn" aria-label="Settings">
+            ⚙
+          </button>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      <main className="tracker-body">
+        <section className="filter-card surface-low ghost-border">
+          <div className="filter-grid">
+            <label className="field">
+              <span>Track</span>
+              <select defaultValue="Tokyo" aria-label="Track">
+                <option>Tokyo</option>
+              </select>
+            </label>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            <label className="field">
+              <span>Race</span>
+              <select defaultValue="11R" aria-label="Race">
+                <option>11R</option>
+              </select>
+            </label>
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+          <button className="fetch-btn" type="button">
+            ☁ Fetch Live Data
+          </button>
+        </section>
+
+        <section className="odds-section">
+          <div className="odds-title-row">
+            <h2>Current Odds</h2>
+            <span className="live-chip">LIVE</span>
+          </div>
+
+          <div className="odds-header" role="row">
+            <span>NO.</span>
+            <span>HORSE / JOCKEY</span>
+            <span>ODDS</span>
+          </div>
+
+          <div className="odds-list" role="table" aria-label="Current odds">
+            {rows.map((row) => (
+              <article
+                key={row.no}
+                className={`odds-row${row.featured ? ' featured' : ''}`}
+                role="row"
+              >
+                <div className="rank">{row.no}</div>
+                <div className="runner">
+                  <p className="horse">{row.horse}</p>
+                  <p className="jockey">{row.jockey}</p>
+                </div>
+                <p className={`price${row.featured ? ' top' : ''}`}>{row.odds}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <footer className="tracker-footer surface-highest">
+        <span className="dot" /> Updated 12 sec ago
+      </footer>
+    </div>
   )
 }
 
