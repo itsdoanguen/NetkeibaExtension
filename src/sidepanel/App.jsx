@@ -77,6 +77,28 @@ function App() {
     [oddsRows, selectedHorseId],
   )
 
+  const raceBasicInfoRows = useMemo(() => {
+    if (!raceResult) {
+      return []
+    }
+
+    const info = raceResult.raceInfo ?? {}
+    const raceTitle = `${raceResult.raceNumber ? `${raceResult.raceNumber} ` : ''}${raceResult.raceName ?? '-'}`
+    const course = info.distance ? `${info.surfaceType ?? ''}${info.distance}m` : '-'
+    const fieldSize = info.fieldSize ? `${info.fieldSize}頭` : '-'
+
+    return [
+      { label: 'レース名', value: raceTitle },
+      { label: '発走時刻', value: info.startTime ?? '-' },
+      { label: 'コース', value: course },
+      { label: '天候', value: info.weather ?? '-' },
+      { label: '馬場状態', value: info.trackCondition ?? '-' },
+      { label: '回り', value: info.turnDirection ?? '-' },
+      { label: '頭数', value: fieldSize },
+      { label: '参照ページ', value: info.sourcePage ?? '-' },
+    ]
+  }, [raceResult])
+
   useEffect(() => {
     if (filteredRaces.length === 0) {
       setSelectedRaceId('')
@@ -253,46 +275,23 @@ function App() {
         </section>
 
         <section className="odds-section">
-          <div className="odds-title-row">
-            <h2>現在のオッズ</h2>
-            <span className="live-chip">ライブ</span>
-          </div>
-
           {raceResult && (
-            <section className="detail-card surface-low ghost-border">
-              <h3>Race Details</h3>
-              <div className="detail-grid">
-                <p>
-                  <strong>Race:</strong> {raceResult.raceNumber ? `${raceResult.raceNumber} ` : ''}
-                  {raceResult.raceName ?? '-'}
-                </p>
-                <p>
-                  <strong>Source:</strong> {raceResult.raceInfo?.sourcePage ?? '-'}
-                </p>
-                <p>
-                  <strong>Start time:</strong> {raceResult.raceInfo?.startTime ?? '-'}
-                </p>
-                <p>
-                  <strong>Distance:</strong>{' '}
-                  {raceResult.raceInfo?.distance
-                    ? `${raceResult.raceInfo.surfaceType ?? ''}${raceResult.raceInfo.distance}m`
-                    : '-'}
-                </p>
-                <p>
-                  <strong>Weather:</strong> {raceResult.raceInfo?.weather ?? '-'}
-                </p>
-                <p>
-                  <strong>Track:</strong> {raceResult.raceInfo?.trackCondition ?? '-'}
-                </p>
-                <p>
-                  <strong>Direction:</strong> {raceResult.raceInfo?.turnDirection ?? '-'}
-                </p>
-                <p>
-                  <strong>Field size:</strong> {raceResult.raceInfo?.fieldSize ?? '-'}
-                </p>
+            <section className="race-basic-section surface-low ghost-border" aria-label="レース基本情報">
+              <h2>レース基本情報</h2>
+              <div className="race-basic-grid">
+                {raceBasicInfoRows.map((item) => (
+                  <div key={item.label} className="race-basic-row">
+                    <span className="race-basic-label">{item.label}</span>
+                    <span className="race-basic-value">{item.value}</span>
+                  </div>
+                ))}
               </div>
             </section>
           )}
+
+          <div className="odds-title-row">
+            <h2>全着順</h2>
+          </div>
 
           <OddsTable
             rows={oddsRows}
