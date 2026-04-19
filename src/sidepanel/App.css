@@ -1,0 +1,170 @@
+.tracker {
+  min-height: 100vh;
+  background: var(--color-surface-dim);
+}
+
+.tracker-header {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+}
+
+.tracker-header h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-on-surface);
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tracker-body {
+  padding: 12px 12px 70px;
+}
+
+.filter-card {
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fetch-btn {
+  width: 100%;
+  height: 36px;
+  border: none;
+  border-radius: 7px;
+  background: var(--gradient-primary);
+  color: var(--color-on-primary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.fetch-btn.secondary {
+  background: #6a7f8d;
+}
+
+.fetch-btn:disabled {
+  opacity: 0.55;
+}
+
+.odds-section {
+  margin-top: 18px;
+}
+
+.odds-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 4px 10px;
+}
+
+.odds-title-row h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.live-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--color-surface-container-highest);
+  color: var(--color-on-surface-variant);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.status {
+  margin: 10px 0 0;
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.status.loading {
+  background: #dfecec;
+  color: #315955;
+}
+
+.status.error {
+  background: #f8dede;
+  color: #863a3a;
+}
+
+.status.success {
+  background: #e4f4e3;
+  color: #35613a;
+}
+
+.detail-card {
+  margin-top: 12px;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.detail-card h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.placeholder {
+  margin: 0;
+  color: var(--color-on-surface-variant);
+  font-size: 12px;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 4px;
+}
+
+.detail-grid p {
+  margin: 0;
+  font-size: 12px;
+}
+
+@media (max-width: 360px) {
+  .tracker-body {
+    padding-inline: 10px;
+  }
+
+  .filter-grid {
+    gap: 8px;
+  }
+}

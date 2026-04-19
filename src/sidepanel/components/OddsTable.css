@@ -1,0 +1,138 @@
+.odds-header {
+  display: grid;
+  grid-template-columns: 36px 1fr 56px;
+  gap: 10px;
+  padding: 0 16px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-on-surface-variant);
+  letter-spacing: 0.04em;
+}
+
+.odds-header span:last-child {
+  text-align: right;
+}
+
+.odds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.odds-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 56px;
+  gap: 10px;
+  align-items: start;
+  min-height: 102px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--color-surface-container-lowest);
+  box-shadow: 0 1px 0 rgba(45, 52, 53, 0.06);
+}
+
+.odds-row.featured {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 9px;
+}
+
+.rank {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--color-surface-container-highest);
+  color: var(--color-on-surface-variant);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.horse,
+.jockey,
+.price {
+  margin: 0;
+}
+
+.runner-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.runner-btn:focus-visible {
+  outline: 2px solid var(--color-primary-container);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.horse {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--color-on-surface);
+}
+
+.jockey {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--color-on-surface-variant);
+}
+
+.runner-meta {
+  margin: 4px 0 0;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-on-primary-container);
+  background: var(--color-secondary-container);
+}
+
+.price {
+  text-align: right;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.price.top {
+  color: var(--color-primary);
+}
+
+@media (max-width: 360px) {
+  .odds-row {
+    min-height: 64px;
+    padding: 9px 10px;
+  }
+
+  .runner-meta {
+    margin-top: 5px;
+    gap: 5px;
+  }
+
+  .meta-chip {
+    height: 17px;
+    padding-inline: 6px;
+  }
+
+  .horse {
+    font-size: 16px;
+  }
+
+  .price {
+    font-size: 18px;
+  }
+}

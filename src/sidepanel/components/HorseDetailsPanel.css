@@ -1,0 +1,564 @@
+.horse-detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.horse-detail-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(45, 52, 53, 0.35);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.horse-detail-sheet {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-container-lowest);
+  transform: translateX(100%);
+  transition: transform 320ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  box-shadow: 0 20px 40px rgba(45, 52, 53, 0.08);
+}
+
+.horse-detail-overlay.open {
+  pointer-events: auto;
+}
+
+.horse-detail-overlay.open .horse-detail-backdrop {
+  opacity: 1;
+}
+
+.horse-detail-overlay.open .horse-detail-sheet {
+  transform: translateX(0);
+}
+
+.horse-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-ghost-border);
+}
+
+.horse-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--color-secondary-container);
+  color: var(--color-on-primary-container);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.horse-detail-header h3 {
+  margin: 8px 0 0;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.horse-detail-header p {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--color-on-surface-variant);
+}
+
+.horse-close-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 999px;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--color-on-surface-variant);
+  background: transparent;
+  cursor: pointer;
+}
+
+.horse-close-btn:hover {
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+}
+
+.horse-tabs {
+  display: flex;
+  gap: 18px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-ghost-border);
+}
+
+.horse-tab {
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.horse-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.horse-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 12px;
+  background: var(--color-surface);
+}
+
+.history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 4px 10px;
+}
+
+.history-head h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.history-head span {
+  font-size: 11px;
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.history-table {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-surface-container-low);
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: 48px 1fr 74px 44px 40px;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 10px;
+}
+
+.history-grid-head {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-on-surface-variant);
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-ghost-border);
+}
+
+.history-grid-head span:last-child {
+  text-align: right;
+}
+
+.history-grid-row {
+  min-height: 58px;
+  background: var(--color-surface-container-lowest);
+  border-bottom: 1px solid var(--color-ghost-border);
+}
+
+.history-grid-row:last-child {
+  border-bottom: none;
+}
+
+.history-date,
+.history-jockey,
+.history-odds {
+  font-size: 12px;
+  color: var(--color-on-surface-variant);
+}
+
+.history-race p,
+.history-race small {
+  margin: 0;
+}
+
+.history-race p {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.history-race small {
+  font-size: 11px;
+  color: var(--color-on-surface-variant);
+}
+
+.history-odds {
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.history-rank {
+  justify-self: end;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.history-rank.rank-win {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.history-rank.rank-place {
+  background: var(--color-secondary-container);
+  color: var(--color-on-surface);
+}
+
+.history-rank.rank-neutral {
+  color: var(--color-on-surface-variant);
+}
+
+.pedigree-view {
+  padding-bottom: 4px;
+}
+
+.pedigree-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 4px 10px;
+}
+
+.pedigree-head h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.pedigree-head span {
+  font-size: 11px;
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pedigree-legend {
+  display: flex;
+  gap: 8px;
+  margin: 0 4px 10px;
+}
+
+.pedigree-legend-detail {
+  margin-top: -2px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.legend-chip.sire {
+  color: #1f4d87;
+  background: #d9e8f8;
+}
+
+.legend-chip.dam {
+  color: #7d4a68;
+  background: #f4dfea;
+}
+
+.legend-chip.detail-sire-sire {
+  color: #17497f;
+  background: #d5e6f8;
+}
+
+.legend-chip.detail-sire-dam {
+  color: #3c5f8e;
+  background: #dfe8f5;
+}
+
+.legend-chip.detail-dam-sire {
+  color: #7d4465;
+  background: #f1dbe8;
+}
+
+.legend-chip.detail-dam-dam {
+  color: #8a5773;
+  background: #f4e4ee;
+}
+
+.pedigree-timeline {
+  position: relative;
+  margin-left: 2px;
+  padding-left: 14px;
+}
+
+.pedigree-timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--color-surface-container-highest);
+}
+
+.pedigree-level {
+  position: relative;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--color-surface-container-lowest);
+}
+
+.pedigree-level::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-primary-container);
+  border: 2px solid var(--color-surface);
+}
+
+.pedigree-level-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pedigree-generation {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.03em;
+}
+
+.pedigree-count {
+  font-size: 11px;
+  color: var(--color-on-surface-variant);
+}
+
+.pedigree-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pedigree-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.pedigree-card {
+  border-radius: 10px;
+  padding: 8px;
+  background: var(--color-surface-container-low);
+  border: 1px solid transparent;
+}
+
+.pedigree-card-sire {
+  background: #dce8f5;
+  border-color: #c7d8ea;
+}
+
+.pedigree-card-dam {
+  background: #f1e2ea;
+  border-color: #e3cdd9;
+}
+
+.pedigree-card-self {
+  background: var(--color-primary-container);
+  border-color: #a8d8d1;
+}
+
+.pedigree-card-gen3 {
+  border-width: 2px;
+  box-shadow: inset 0 -1px 0 rgba(45, 52, 53, 0.05);
+}
+
+.pedigree-card-gen3-sire {
+  background: linear-gradient(180deg, #c9ddf3 0%, #dbe9f8 100%);
+  border-color: #7da6d1;
+  box-shadow: inset 4px 0 0 #2d6aac;
+}
+
+.pedigree-card-gen3-dam {
+  background: linear-gradient(180deg, #efd8e6 0%, #f5e4ee 100%);
+  border-color: #ca8dad;
+  box-shadow: inset 4px 0 0 #9b5f80;
+}
+
+.pedigree-card-sire-sire {
+  background: #d5e6f8;
+  border-color: #b9d3ec;
+  box-shadow: inset 3px 0 0 #3f6fa8;
+}
+
+.pedigree-card-sire-dam {
+  background: #dfe8f5;
+  border-color: #c6d6ea;
+  box-shadow: inset 3px 0 0 #6588b4;
+}
+
+.pedigree-card-dam-sire {
+  background: #f1dbe8;
+  border-color: #e2c2d7;
+  box-shadow: inset 3px 0 0 #a86a8d;
+}
+
+.pedigree-card-dam-dam {
+  background: #f4e4ee;
+  border-color: #e8d0df;
+  box-shadow: inset 3px 0 0 #be86a4;
+}
+
+.pedigree-card p,
+.pedigree-card small {
+  margin: 0;
+}
+
+.pedigree-card p {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  line-height: 1.25;
+}
+
+.pedigree-card-sire p,
+.pedigree-card-sire small {
+  color: #1f4d87;
+}
+
+.pedigree-card-dam p,
+.pedigree-card-dam small {
+  color: #7d4a68;
+}
+
+.pedigree-card-gen3-sire p,
+.pedigree-card-gen3-sire small {
+  color: #1a4f89;
+}
+
+.pedigree-card-gen3-dam p,
+.pedigree-card-gen3-dam small {
+  color: #834f6f;
+}
+
+.pedigree-card-sire-sire p,
+.pedigree-card-sire-sire small {
+  color: #17497f;
+}
+
+.pedigree-card-sire-dam p,
+.pedigree-card-sire-dam small {
+  color: #3c5f8e;
+}
+
+.pedigree-card-dam-sire p,
+.pedigree-card-dam-sire small {
+  color: #7d4465;
+}
+
+.pedigree-card-dam-dam p,
+.pedigree-card-dam-dam small {
+  color: #8a5773;
+}
+
+.pedigree-card-self p,
+.pedigree-card-self small {
+  color: var(--color-on-primary-container);
+}
+
+.pedigree-card small {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--color-on-surface-variant);
+}
+
+.horse-detail-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid var(--color-ghost-border);
+  background: var(--color-surface-container-lowest);
+}
+
+.horse-action-btn {
+  height: 38px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  background: var(--color-surface-container-lowest);
+  cursor: pointer;
+}
+
+.horse-action-btn.primary {
+  border: none;
+  background: var(--gradient-primary);
+  color: var(--color-on-primary);
+}
+
+@media (max-width: 360px) {
+  .history-grid {
+    grid-template-columns: 44px 1fr 68px 40px 36px;
+    gap: 6px;
+    padding-inline: 8px;
+  }
+
+  .pedigree-level {
+    padding: 9px;
+  }
+
+  .pedigree-legend {
+    gap: 6px;
+  }
+
+  .pedigree-legend-detail {
+    margin-bottom: 10px;
+  }
+
+  .legend-chip {
+    height: 19px;
+    padding-inline: 7px;
+  }
+
+  .pedigree-grid {
+    gap: 6px;
+  }
+
+  .pedigree-card {
+    padding: 7px;
+  }
+
+  .horse-detail-header h3 {
+    font-size: 26px;
+  }
+}
