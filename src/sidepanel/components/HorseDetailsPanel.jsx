@@ -1,88 +1,39 @@
 import { useEffect, useState } from 'react'
 
-const mockHistory = [
-  {
-    date: 'Oct 29',
-    race: 'Tenno Sho (Autumn)',
-    meta: 'G1 • 2000m • Turf',
-    jockey: 'C. Lemaire',
-    odds: '1.3',
-    rank: '1',
-    rankClass: 'rank-win',
-  },
-  {
-    date: 'Jun 25',
-    race: 'Takarazuka Kinen',
-    meta: 'G1 • 2200m • Turf',
-    jockey: 'C. Lemaire',
-    odds: '1.3',
-    rank: '1',
-    rankClass: 'rank-win',
-  },
-  {
-    date: 'May 28',
-    race: 'Tokyo Yushun',
-    meta: 'G1 • 2400m • Turf',
-    jockey: 'C. Lemaire',
-    odds: '3.8',
-    rank: '2',
-    rankClass: 'rank-place',
-  },
-  {
-    date: 'Apr 16',
-    race: 'Satsuki Sho',
-    meta: 'G1 • 2000m • Turf',
-    jockey: 'C. Lemaire',
-    odds: '5.7',
-    rank: '2',
-    rankClass: 'rank-place',
-  },
-  {
-    date: 'Nov 20',
-    race: 'Tokyo Sports Hai',
-    meta: 'G2 • 1800m • Turf',
-    jockey: 'C. Lemaire',
-    odds: '2.6',
-    rank: '1',
-    rankClass: 'rank-neutral',
-  },
-]
+function buildPedigreeLevels(pedigree = []) {
+  if (!Array.isArray(pedigree) || pedigree.length === 0) {
+    return []
+  }
 
-const mockPedigree = [
-  {
-    generation: '第1世代',
-    entries: [{ role: '対象馬', name: 'Equinox' }],
-  },
-  {
-    generation: '第2世代',
-    entries: [
-      { role: '父', name: 'Kitasan Black' },
-      { role: '母', name: 'Chateau Blanche' },
-    ],
-  },
-  {
-    generation: '第3世代',
-    entries: [
-      { role: '父父', name: 'Black Tide' },
-      { role: '父母', name: 'Sugar Heart' },
-      { role: '母父', name: 'King Halo' },
-      { role: '母母', name: 'Blancherie' },
-    ],
-  },
-  {
-    generation: '第4世代',
-    entries: [
-      { role: '父父父', name: 'Sunday Silence' },
-      { role: '父父母', name: 'Wind in Her Hair' },
-      { role: '父母父', name: 'Sakura Bakushin O' },
-      { role: '父母母', name: 'Otome Gokoro' },
-      { role: '母父父', name: 'Dancing Brave' },
-      { role: '母父母', name: 'Goodbye Halo' },
-      { role: '母母父', name: 'Tony Bin' },
-      { role: '母母母', name: 'Shadai Cosmo' },
-    ],
-  },
-]
+  const levelSizes = [1, 2, 4, 8]
+  const levelLabels = ['第1世代', '第2世代', '第3世代', '第4世代']
+  let cursor = 0
+
+  return levelSizes
+    .map((size, index) => {
+      const entries = pedigree.slice(cursor, cursor + size).map((node, entryIndex) => ({
+        role: node.horseId ? `ID ${node.horseId}` : `Line ${entryIndex + 1}`,
+        name: node.horseName,
+      }))
+      cursor += size
+
+      return {
+        generation: levelLabels[index],
+        entries,
+      }
+    })
+    .filter((level) => level.entries.length > 0)
+}
+
+function getRankClass(finishPosition) {
+  if (finishPosition === '1') {
+    return 'rank-win'
+  }
+  if (finishPosition === '2' || finishPosition === '3') {
+    return 'rank-place'
+  }
+  return 'rank-neutral'
+}
 
 function getPedigreeBranch(role) {
   if (role === '対象馬') {
@@ -117,9 +68,12 @@ function getFourthGenerationBranch(role) {
   return ''
 }
 
-function HorseDetailsPanel({ isOpen, runner, onClose }) {
+function HorseDetailsPanel({ isOpen, runner, details, isLoading, errorMessage, onClose }) {
   const horseName = runner?.horse ?? 'Equinox'
   const jockeyName = runner?.jockey ?? 'C. Lemaire'
+  const profileEntries = Object.entries(details?.profile ?? {})
+  const raceHistory = details?.raceHistory ?? []
+  const pedigreeLevels = buildPedigreeLevels(details?.pedigree ?? [])
   const [activeTab, setActiveTab] = useState('history')
 
   useEffect(() => {
@@ -145,9 +99,9 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
       >
         <header className="horse-detail-header surface-highest">
           <div>
-            <span className="horse-badge">4歳 • 牡馬</span>
+            <span className="horse-badge">{runner?.sexAge ?? '詳細情報'}</span>
             <h3>{horseName}</h3>
-            <p>{`58.0kg • ${jockeyName} • 6戦 (4-2-0)`}</p>
+            <p>{`${runner?.carriedWeight ?? '-'}kg • ${jockeyName} • 人気 ${runner?.popularity ?? '-'}`}</p>
           </div>
           <button
             type="button"
@@ -184,11 +138,51 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
         </nav>
 
         <section className="horse-detail-content">
-          {(activeTab === 'history' || activeTab === 'overview') && (
+          {activeTab === 'overview' && (
+            <>
+              {isLoading && <p className="placeholder">Loading horse details...</p>}
+              {errorMessage && <p className="placeholder">{errorMessage}</p>}
+              {!isLoading && !errorMessage && (
+                <div className="history-table ghost-border">
+                  <div className="history-grid history-grid-head">
+                    <span>項目</span>
+                    <span>内容</span>
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+
+                  {profileEntries.length === 0 && (
+                    <div className="history-grid history-grid-row">
+                      <span>-</span>
+                      <span>プロフィール情報がありません</span>
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                  )}
+
+                  {profileEntries.map(([label, value]) => (
+                    <div key={label} className="history-grid history-grid-row">
+                      <span className="history-date">{label}</span>
+                      <div className="history-race">
+                        <p>{value}</p>
+                      </div>
+                      <span className="history-jockey" />
+                      <span className="history-odds" />
+                      <span className="history-rank rank-neutral">-</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {activeTab === 'history' && (
             <>
               <div className="history-head">
                 <h4>最近の成績</h4>
-                <span>直近5走</span>
+                <span>{raceHistory.length > 0 ? `全 ${raceHistory.length} 走` : 'データなし'}</span>
               </div>
 
               <div className="history-table ghost-border">
@@ -200,18 +194,25 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
                   <span>着順</span>
                 </div>
 
-                {mockHistory.map((item) => (
-                  <div key={`${item.date}-${item.race}`} className="history-grid history-grid-row">
-                    <span className="history-date">{item.date}</span>
+                {isLoading && <p className="placeholder">Loading horse details...</p>}
+                {errorMessage && <p className="placeholder">{errorMessage}</p>}
+
+                {!isLoading && !errorMessage && raceHistory.map((item, index) => (
+                  <div key={`${item.date ?? 'date'}-${item.raceName ?? 'race'}-${index}`} className="history-grid history-grid-row">
+                    <span className="history-date">{item.date ?? '-'}</span>
                     <div className="history-race">
-                      <p>{item.race}</p>
-                      <small>{item.meta}</small>
+                      <p>{item.raceName ?? '-'}</p>
+                      <small>{`${item.venue ?? '-'} • ${item.weather ?? '-'} • ${item.goalTime ?? '-'}`}</small>
                     </div>
-                    <span className="history-jockey">{item.jockey}</span>
-                    <span className="history-odds">{item.odds}</span>
-                    <span className={`history-rank ${item.rankClass}`}>{item.rank}</span>
+                    <span className="history-jockey">{item.jockey ?? '-'}</span>
+                    <span className="history-odds">{item.odds ?? '-'}</span>
+                    <span className={`history-rank ${getRankClass(item.finishPosition)}`}>{item.finishPosition ?? '-'}</span>
                   </div>
                 ))}
+
+                {!isLoading && !errorMessage && raceHistory.length === 0 && (
+                  <p className="placeholder">No race history data.</p>
+                )}
               </div>
             </>
           )}
@@ -236,7 +237,10 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
               </div>
 
               <div className="pedigree-timeline">
-                {mockPedigree.map((level) => (
+                {isLoading && <p className="placeholder">Loading horse details...</p>}
+                {errorMessage && <p className="placeholder">{errorMessage}</p>}
+
+                {!isLoading && !errorMessage && pedigreeLevels.map((level) => (
                   <section key={level.generation} className="pedigree-level ghost-border">
                     <div className="pedigree-level-top">
                       <span className="pedigree-generation">{level.generation}</span>
@@ -270,6 +274,10 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
                     </div>
                   </section>
                 ))}
+
+                {!isLoading && !errorMessage && pedigreeLevels.length === 0 && (
+                  <p className="placeholder">No pedigree data.</p>
+                )}
               </div>
             </div>
           )}

@@ -2,6 +2,28 @@ import { parseOddsFromHtml } from '../utils/parser.js'
 
 const NETKEIBA_ODDS_URL = 'https://www.netkeiba.com/'
 
+async function enableSidePanelOnActionClick() {
+  if (!chrome.sidePanel?.setPanelBehavior) {
+    return
+  }
+
+  try {
+    await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
+  } catch (error) {
+    console.error('Failed to configure side panel behavior:', error)
+  }
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+  enableSidePanelOnActionClick()
+})
+
+chrome.runtime.onStartup.addListener(() => {
+  enableSidePanelOnActionClick()
+})
+
+enableSidePanelOnActionClick()
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== 'FETCH_ODDS') {
     return false
