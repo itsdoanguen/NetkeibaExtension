@@ -4,11 +4,16 @@
   "version": "1.0.0",
   "description": "Crawl tên ngựa, odds và nài ngựa",
   "icons": {
-    "16": "icon-16.png",
-    "48": "icon-48.png",
-    "128": "icon-128.png"
+    "16": "logotype_icon.png",
+    "48": "logotype_icon.png",
+    "128": "logotype_icon.png"
   },
   "action": {
+    "default_icon": {
+      "16": "logotype_icon.png",
+      "48": "logotype_icon.png",
+      "128": "logotype_icon.png"
+    },
     "default_title": "JRA Odds Tracker"
   },
   "side_panel": {
