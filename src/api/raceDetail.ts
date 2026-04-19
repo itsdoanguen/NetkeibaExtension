@@ -1,7 +1,6 @@
 import { load } from 'cheerio'
 
 import { fetchHtml, toAbsoluteUrl, withRetry } from './http'
-import { setRaceResult } from './storage'
 import type { Horse, RaceResult } from './types'
 
 const RACE_RESULT_BASE_URL = 'https://race.netkeiba.com/race/result.html'
@@ -311,7 +310,6 @@ export async function fetchRaceHorses(raceId: string): Promise<RaceResult> {
       raceInfo: resultInfo,
       horses: resultHorses,
     }
-    await setRaceResult(raceResult)
     return raceResult
   }
 
@@ -347,7 +345,6 @@ export async function fetchRaceHorses(raceId: string): Promise<RaceResult> {
     raceInfo,
     horses,
   }
-  await setRaceResult(raceResult)
 
   return raceResult
 }

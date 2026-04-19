@@ -1,7 +1,6 @@
 import { load } from 'cheerio'
 
 import { fetchHtml, toAbsoluteUrl, withRetry } from './http'
-import { setRaces } from './storage'
 import type { Race } from './types'
 
 const RACE_TOP_URL = 'https://race.netkeiba.com/top/'
@@ -162,7 +161,6 @@ export async function fetchRaceList(): Promise<Race[]> {
     const { html, sourceUrl } = await fetchRaceListSubHtmlForCurrentDate()
     const races = parseRaceListHtml(html, sourceUrl)
     if (races.length > 0) {
-      await setRaces(races)
       return races
     }
 
@@ -175,7 +173,6 @@ export async function fetchRaceList(): Promise<Race[]> {
     const html = await withRetry(() => fetchHtml(RACE_TOP_URL, 120))
     const races = parseRaceListHtml(html, RACE_TOP_URL)
     if (races.length > 0) {
-      await setRaces(races)
       return races
     }
 

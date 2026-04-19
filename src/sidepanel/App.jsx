@@ -105,7 +105,7 @@ function App() {
       return
     }
 
-    if (!filteredRaces.some((race) => race.raceId === selectedRaceId)) {
+    if (selectedRaceId && !filteredRaces.some((race) => race.raceId === selectedRaceId)) {
       setSelectedRaceId(filteredRaces[0].raceId)
     }
   }, [filteredRaces, selectedRaceId])
@@ -165,6 +165,7 @@ function App() {
       const data = await fetchRaceList()
       setRaces(data)
       setSelectedTrack(data[0]?.trackName ?? '')
+      setSelectedRaceId('')
       setRaceResult(null)
       setSelectedHorseId('')
       setIsHorseDetailsOpen(false)
@@ -183,11 +184,20 @@ function App() {
       return
     }
 
-    setLoadingLabel(`Loading horses for race ${selectedRaceId}...`)
+    await loadHorsesForRace(selectedRaceId)
+  }
+
+  async function loadHorsesForRace(raceId) {
+    if (!raceId) {
+      setErrorMessage('Please select a race first.')
+      return
+    }
+
+    setLoadingLabel(`Loading horses for race ${raceId}...`)
     setErrorMessage('')
     setPipelineMessage('')
     try {
-      const result = await fetchRaceHorses(selectedRaceId)
+      const result = await fetchRaceHorses(raceId)
       setRaceResult(result)
       const firstHorseId = result.horses[0]?.horseId ?? ''
       setSelectedHorseId(firstHorseId)
@@ -199,6 +209,11 @@ function App() {
     } finally {
       setLoadingLabel('')
     }
+  }
+
+  function handleSelectRace(raceId) {
+    setSelectedRaceId(raceId)
+    void loadHorsesForRace(raceId)
   }
 
   async function handleRunQuickPipeline() {
@@ -229,11 +244,14 @@ function App() {
       <header className="tracker-header surface-highest">
         <h1>Netkeiba Crawler</h1>
         <div className="header-actions" aria-label="Header actions">
-          <button type="button" className="icon-btn" aria-label="Refresh races" onClick={handleLoadRaces}>
+          <button
+            type="button"
+            className="icon-btn"
+            aria-label="Refresh races"
+            title="レース一覧を再取得します"
+            onClick={handleLoadRaces}
+          >
             ↻
-          </button>
-          <button type="button" className="icon-btn" aria-label="Quick pipeline" onClick={handleRunQuickPipeline}>
-            ⚡
           </button>
         </div>
       </header>
@@ -242,35 +260,21 @@ function App() {
         <section className="filter-card surface-low ghost-border">
           <div className="filter-grid">
             <Dropdown
-              label="Track"
+              label="競馬場"
               value={selectedTrack}
               options={trackOptions}
               onChange={setSelectedTrack}
-              placeholder="Select track"
+              placeholder="選択してください"
               disabled={Boolean(loadingLabel) || trackOptions.length === 0}
             />
             <Dropdown
-              label="Race"
+              label="レース"
               value={selectedRaceId}
               options={raceOptions}
-              onChange={setSelectedRaceId}
-              placeholder="Select race"
+              onChange={handleSelectRace}
+              placeholder="選択してください"
               disabled={Boolean(loadingLabel) || raceOptions.length === 0}
             />
-          </div>
-
-          <div className="actions-row">
-            <button className="fetch-btn" type="button" onClick={handleLoadRaces} disabled={Boolean(loadingLabel)}>
-              ☁ Fetch Race List
-            </button>
-            <button
-              className="fetch-btn secondary"
-              type="button"
-              onClick={handleLoadHorses}
-              disabled={Boolean(loadingLabel) || !selectedRaceId}
-            >
-              ⇢ Load Horses
-            </button>
           </div>
         </section>
 
