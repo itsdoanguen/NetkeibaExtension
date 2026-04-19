@@ -55,7 +55,7 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
       <button
         type="button"
         className="horse-detail-backdrop"
-        aria-label="Close horse details"
+        aria-label="馬詳細を閉じる"
         onClick={onClose}
       />
 
@@ -63,49 +63,49 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
         className="horse-detail-sheet"
         role="dialog"
         aria-modal="true"
-        aria-label="Horse details"
+        aria-label="馬詳細"
       >
         <header className="horse-detail-header surface-highest">
           <div>
-            <span className="horse-badge">Age 4 • Colt</span>
+            <span className="horse-badge">4歳 • 牡馬</span>
             <h3>{horseName}</h3>
-            <p>{`58.0kg • ${jockeyName} • 6 Starts (4-2-0)`}</p>
+            <p>{`58.0kg • ${jockeyName} • 6戦 (4-2-0)`}</p>
           </div>
           <button
             type="button"
             className="horse-close-btn"
-            aria-label="Close horse details"
+            aria-label="馬詳細を閉じる"
             onClick={onClose}
           >
             ×
           </button>
         </header>
 
-        <nav className="horse-tabs surface-highest" aria-label="Horse detail tabs">
+        <nav className="horse-tabs surface-highest" aria-label="馬詳細タブ">
           <button type="button" className="horse-tab">
-            Thông tin chung
+            基本情報
           </button>
           <button type="button" className="horse-tab active">
-            Lịch sử
+            戦績
           </button>
           <button type="button" className="horse-tab">
-            Gia phả
+            血統
           </button>
         </nav>
 
         <section className="horse-detail-content">
           <div className="history-head">
-            <h4>Recent Form</h4>
-            <span>Last 5 Starts</span>
+            <h4>最近の成績</h4>
+            <span>直近5走</span>
           </div>
 
           <div className="history-table ghost-border">
             <div className="history-grid history-grid-head">
-              <span>Date</span>
-              <span>Race</span>
-              <span>Jockey</span>
-              <span>Odds</span>
-              <span>Rank</span>
+              <span>日付</span>
+              <span>レース</span>
+              <span>騎手</span>
+              <span>オッズ</span>
+              <span>着順</span>
             </div>
 
             {mockHistory.map((item) => (
@@ -125,10 +125,10 @@ function HorseDetailsPanel({ isOpen, runner, onClose }) {
 
         <footer className="horse-detail-footer">
           <button type="button" className="horse-action-btn ghost-border">
-            Share Profile
+            プロフィール共有
           </button>
           <button type="button" className="horse-action-btn primary">
-            Track Horse
+            追跡に追加
           </button>
         </footer>
       </aside>
