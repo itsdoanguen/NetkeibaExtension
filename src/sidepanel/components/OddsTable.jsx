@@ -1,3 +1,4 @@
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import './OddsTable.css'
 
@@ -13,7 +14,7 @@ function OddsTable({ rows, onRunnerClick }) {
 
       <div className="odds-list" role="table" aria-label={t('oddsTableComponent.ariaFullResults')}>
         {rows.map((row) => (
-          <article key={row.no} className={`odds-row${row.featured ? ' featured' : ''}`} role="row">
+          <article key={row.horseId ?? `${row.no}-${row.horse}`} className={`odds-row${row.featured ? ' featured' : ''}`} role="row">
             <div className="rank">{row.no}</div>
             <button
               type="button"
@@ -36,4 +37,4 @@ function OddsTable({ rows, onRunnerClick }) {
   )
 }
 
-export default OddsTable
+export default React.memo(OddsTable)

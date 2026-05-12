@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import './styles.css'
@@ -226,6 +226,13 @@ function App() {
     void loadHorsesForRace(raceId)
   }
 
+  const handleRunnerClick = useCallback((row) => {
+    if (row?.horseId) {
+      setSelectedHorseId(row.horseId)
+      setIsHorseDetailsOpen(true)
+    }
+  }, [setSelectedHorseId, setIsHorseDetailsOpen])
+
   async function handleRunQuickPipeline() {
     setLoadingLabel(t('raceList.pipelineRunning'))
     setErrorMessage('')
@@ -319,12 +326,7 @@ function App() {
 
           <OddsTable
             rows={oddsRows}
-            onRunnerClick={(row) => {
-              if (row?.horseId) {
-                setSelectedHorseId(row.horseId)
-                setIsHorseDetailsOpen(true)
-              }
-            }}
+            onRunnerClick={handleRunnerClick}
           />
         </section>
 
